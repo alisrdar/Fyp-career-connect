@@ -6,7 +6,7 @@ import Card from "@/components/ui/Card";
 export default function Home() {
   return (
     <>
-      <div className="min-h-screen bg-background-light ">
+      <div className="min-h-screen bg-background-light dark:bg-background-dark ">
         <Navbar/>
         <Hero
           title={"Guidence for Success"}
@@ -14,8 +14,10 @@ export default function Home() {
           buttonText={"Get Started"}
           backgroundImage={"/heroCoverImage.jpg"}
         />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+        {/* Cards */}
         <Card
-          className="w-1/3 m-4 bg-white"
+          className=" bg-red-500"
           imageSrc="/blog.jpg"
           tag="Career Tips"
           readingTime="4 min read"
@@ -24,7 +26,13 @@ export default function Home() {
           linkText="Explore Guide"
           href="/guide"
         />
-
+        <Card
+          title="Just a simple card "
+          description="This is a very basic card without image, tag or button."
+          className="  bg-accent"
+        />
+      </div>
+       
       </div>
     </>
   );

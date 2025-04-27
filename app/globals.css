@@ -2,12 +2,9 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  
- 
   --color-primary: #146C94;
   --color-secondary: #9bd7f1;
   --color-accent: #AFD3E2;
-  
 
   --color-darkblue: #0B2447;
   --color-background-light: #F6F1F1;
@@ -19,7 +16,10 @@
   --color-muted: #CCCCCC;
   --color-border: #2A2A2A;
 }
-
+body {
+  margin: 0;
+  padding: 0;
+}
 /* :root {
   --color-bg-light: #F6F1F1;
   --color-bg-mid: #AFD3E2;

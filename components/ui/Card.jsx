@@ -9,11 +9,13 @@ const Card = ({
   description,
   linkText = "Read more",
   href = "#",
-  className= ""
+  className = "",
 }) => {
-    const baseStyle= "rounded-lg shadow-md overflow-hidden bg-white dark:bg-surface"
+  const baseStyle =
+    "bg-white dark:bg-surface rounded-lg overflow-hidden flex flex-col shadow-md dark:shadow-[0_4px_12px_rgba(255,255,255,0.05)]";
+
   return (
-    <div className={` ${className} ${baseStyle}`}>
+    <div className={`${className} ${baseStyle}`}>
       {/* Image */}
       {imageSrc && (
         <Image
@@ -21,37 +23,32 @@ const Card = ({
           alt={title || "Card Image"}
           width={500}
           height={300}
-          className="w-full h-48 object-cover"
+          className="w-full h-48 object-cover block"
         />
       )}
 
       {/* Content */}
-      <div className="p-6">
-        {/* Tag and Meta */}
+      <div className="p-4 md:p-6">
         {(tag || readingTime) && (
-          <div className="flex items-center gap-3 text-sm text-muted mb-2">
+          <div className="flex items-center gap-3 text-xs text-muted dark:text-foreground-dark/70 mb-2">
             {tag && (
-              <span className="px-2 py-1 bg-accent rounded text-foreground-light dark:text-foreground-dark">
+              <span className="px-2 py-1 bg-accent dark:bg-darkblue rounded text-foreground-light dark:text-foreground-dark text-xs font-semibold">
                 {tag}
               </span>
             )}
             {readingTime && <span>{readingTime}</span>}
           </div>
         )}
-
-        {/* Title */}
         {title && (
           <h3 className="text-xl font-bold mb-2 text-foreground-light dark:text-foreground-dark">
             {title}
           </h3>
         )}
-
-        {/* Description */}
         {description && (
-          <p className="text-muted mb-4">{description}</p>
+          <p className="text-foreground-light/70 dark:text-muted mb-4 text-sm leading-relaxed">
+            {description}
+          </p>
         )}
-
-        {/* Link / Button */}
         {linkText && href && (
           <a
             href={href}

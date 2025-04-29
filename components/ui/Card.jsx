@@ -12,7 +12,7 @@ const Card = ({
   className = "",
 }) => {
   const baseStyle =
-    "bg-white dark:bg-surface rounded-lg overflow-hidden flex flex-col shadow-md dark:shadow-[0_4px_12px_rgba(255,255,255,0.05)]";
+    "bg-white dark:bg-surface rounded-md overflow-hidden flex flex-col shadow-md dark:shadow-[0_4px_12px_rgba(255,255,255,0.05)]";
 
   return (
     <div className={`${className} ${baseStyle}`}>
@@ -23,7 +23,7 @@ const Card = ({
           alt={title || "Card Image"}
           width={500}
           height={300}
-          className="w-full h-48 object-cover block"
+          className="w-full h-48 object-cover block rounded-sm"
         />
       )}
 

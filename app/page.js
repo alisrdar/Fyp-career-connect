@@ -13,9 +13,9 @@ export default function Home() {
           title={"Guidence for Success"}
           description={"Unlock your potential and achieve your career goals with our Comprehensive counseling Services."}
           buttonText={"Get Started"}
-          backgroundImage={"/heroCoverImage.jpg"}
+          backgroundImage={"/images/HeroImage2.png"}
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-12 p-6">
         {/* Cards */}
         <Card
           className=" bg-red-500"

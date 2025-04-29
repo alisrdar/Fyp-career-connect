@@ -61,8 +61,8 @@ const Footer = () => {
       </div>
 
       {/* Bottom Note */}
-      <div className="text-center text-sm text-muted mt-12  pt-4">
-        © {new Date().getFullYear()} Career Connect. All rights reserved.
+      <div className="text-center text-sm text-muted mt-12 border-t border-extra-muted pt-4">
+        © 2025 Career Connect. All rights reserved.
       </div>
     </footer>
   );

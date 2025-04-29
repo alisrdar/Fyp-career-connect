@@ -13,8 +13,9 @@
   --color-background-dark: #121212;
   --color-foreground-dark: #ededed;
   --color-surface: #1E1E1E;
-  --color-muted: #CCCCCC;
+  --color-muted: #424856;
   --color-border: #2A2A2A;
+  --color-less-dark: #383838;
 }
 body {
   margin: 0;

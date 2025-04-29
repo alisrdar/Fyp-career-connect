@@ -43,3 +43,12 @@ const Hero = ({ title, description, buttonText, backgroundImage }) => {
 };
 
 export default Hero;
+// Ok read this sitemap and storyboard and help me to decide what pages should I make besides the landing page, 
+
+
+
+// how should I make the dashboard?
+// should the navbar of dashboard be different from the main navbar
+
+// I have already made components like navbar, Hero, card-grid, footer, callToAction
+// exactly which more components do I need

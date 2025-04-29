@@ -2,6 +2,7 @@ import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Card from "@/components/ui/Card";
+import Footer from "@/components/footer";
 
 export default function Home() {
   return (
@@ -31,8 +32,9 @@ export default function Home() {
           description="This is a very basic card without image, tag or button."
           className="  bg-accent"
         />
-      </div>
-       
+        
+        </div>
+        <Footer></Footer>
       </div>
     </>
   );

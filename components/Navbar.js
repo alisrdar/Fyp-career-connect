@@ -14,7 +14,7 @@ const Navbar = () => {
     theme === "dark" ? "/pgec_logo_white_Svg.png" : "/pegcLogo_black.png";
 
   return (
-    <nav className="bg-background-light text-foreground-light dark:bg-background-dark dark:text-foreground-dark shadow px-6 py-4">
+    <nav className="bg-background-light text-foreground-light dark:bg-background-dark dark:text-foreground-dark shadow px-6 py-4 transition-all duration-300">
       <div className="flex items-center justify-between">
         {/* Logo */}
         <Link href={"/"} className="flex items-center gap-2 font-bold">
@@ -88,7 +88,7 @@ const Navbar = () => {
                 className="p-2 mx-2 rounded-full hover:bg-muted/20 transition-colors text-foreground-light dark:text-foreground-dark"
                 aria-label="Toggle Theme"
               >
-                {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+                {theme === "dark" ? <Moon size={20} /> : <Sun size={20} />}
               </button>
             </li>
           </ul>
@@ -136,7 +136,7 @@ const Navbar = () => {
                 className="p-2  rounded-full hover:bg-muted/20 transition-colors text-foreground-light dark:text-foreground-dark"
                 aria-label="Toggle Theme"
               >
-                {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+                {theme === "dark" ? <Moon size={20} /> : <Sun size={20} />}
               </button>
           </li>
         </ul>

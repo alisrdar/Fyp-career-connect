@@ -8,22 +8,22 @@ const Card = ({
   title,
   description,
   linkText = "Read more",
-  href = "#",
+  href ,
   className = "",
 }) => {
   const baseStyle =
-    "bg-white dark:bg-surface rounded-md overflow-hidden flex flex-col shadow-md dark:shadow-[0_4px_12px_rgba(255,255,255,0.05)]";
+    "bg-white dark:bg-surface rounded-md overflow-hidden flex flex-col flex-wrap shadow-md dark:shadow-[0_4px_12px_rgba(255,255,255,0.05)]";
 
   return (
-    <div className={`${className} ${baseStyle}`}>
+    <div className={`${baseStyle} ${className} `}>
       {/* Image */}
       {imageSrc && (
         <Image
           src={imageSrc}
           alt={title || "Card Image"}
-          width={500}
-          height={300}
-          className="w-full h-48 object-cover block rounded-sm"
+          width={300}
+          height={500}
+          className="w-full h-60 object-cover block rounded-sm"
         />
       )}
 

@@ -19,7 +19,17 @@ const page = () => {
             placeholder: "Enter your password",
             validation: passwordValidation,
         }
-    ]
+    ];
+    const onSubmit = async (data, setError) => {
+        try {
+          await delay(2);
+          console.log(data);
+        } catch (err) {
+          setError("root", {
+            message: "Email is already taken",
+          });
+        }
+      };
   return (
     <div className='flex items-center justify-center min-h-screen bg-background-light dark:bg-background-dark bg-[url("/images/signbg2.jpg")] bg-cover bg-center'>
         <AuthForm
@@ -28,9 +38,8 @@ const page = () => {
             fields={fields}
             redirectText={"Don't have an account? Sign up"}
             redirectHref={"signup"}
-        />
-        
-            
+            onSubmit={onSubmit}
+        /> 
     </div>
   )
 }

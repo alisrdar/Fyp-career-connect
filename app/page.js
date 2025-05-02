@@ -15,8 +15,8 @@ export default function Home() {
   const router = useRouter();
   return (
     <>
+      <Navbar />
       <div className="min-h-screen bg-background-light dark:bg-background-dark ">
-        <Navbar/>
         <Hero
           title={"Guidence for Success"}
           description={"Unlock your potential and achieve your career goals with our Comprehensive counseling Services."}
@@ -82,9 +82,8 @@ export default function Home() {
           />
         </div>
         </section>
-       
-        <Footer></Footer>
       </div>
+      <Footer />
     </>
   );
 }

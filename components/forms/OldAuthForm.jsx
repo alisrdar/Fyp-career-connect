@@ -14,8 +14,7 @@ const AuthForm = ({
   onSubmit,
   redirectText,
   redirectHref,
-  onSuccess,
-  socialProviders = ["Google", "Facebook", "Apple"]
+  onSuccess
 }) => {
   const {
     register,
@@ -30,8 +29,8 @@ const AuthForm = ({
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto p-10 rounded-3xl bg-white/10 backdrop-blur-lg shadow-xl border border-white/20 text-foreground-light dark:text-foreground-dark">
-      <h2 className="text-3xl font-bold text-white text-center mb-6">
+    <div className="max-w-md w-100 mx-auto bg-transparent dark:bg-surface p-8  rounded-2xl shadow-lg">
+      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white">
         {title}
       </h2>
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5">
@@ -50,7 +49,7 @@ const AuthForm = ({
             <div className="flex flex-col">
               <label
                 htmlFor={name}
-                className="text-sm font-medium text-white  dark:text-gray-300 mb-1"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
               >
                 {label}
               </label>
@@ -59,7 +58,7 @@ const AuthForm = ({
                 type={type}
                 {...register(name, validation)}
                 placeholder={placeholder}
-                className="p-2.5 rounded-xl border border-gray-300 bg-white/70 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary w-full"
+                className="p-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
               {errors[name] && (
                 <span className="text-red-500 text-xs mt-1">{errors[name].message}</span>
@@ -76,38 +75,52 @@ const AuthForm = ({
         <Button 
           btnText={isSubmitting ? "Loading..." : btnText} 
           variant="primary" 
-          className="w-full" 
+          className="w-full bg-secondary" 
           disabled={isSubmitting}
           type="submit"
         />
         
       </form>
-      <p className="text-center  text-sm text-white/70 mt-2">or {title} with </p>
-      <div className="flex justify-center gap-4 mt-2">
-        {socialProviders.map((provider) => ( 
-          <Button
-            key={provider}
-            btnText={
-              <Image
-                src={`/icons/${provider}.svg`}
-                alt="Facebook"
-                width={20}
-                height={20}
-                className="w-5 h-5 mx-auto"
-              />
-            }
-            variant="ghost"
-            type="button"
-            onClick={() => console.log("Facebook Sign In")}
-            className="w-full border border-primary"
-          />
-      
-          ))}
+      <p className="text-center  text-sm text-gray-700 dark:text-300 my-1">or {title} with </p>
+      <div className="flex justify-center gap-2 mt-4 ">
+        <Button
+          btnText={
+            <Image
+              src="/icons/Google.svg"
+              alt="Google"
+              width={20}
+              height={20}
+              className="w-5 h-5 mx-auto"
+            />
+          }
+          type="button"
+          onClick={() => console.log("Google Sign In")}
+          variant="ghost"
+          className="w-full border border-primary"
+        />
+          
+        
+        <Button
+          btnText={
+            <Image
+              src="/icons/Facebook.svg"
+              alt="Facebook"
+              width={20}
+              height={20}
+              className="w-5 h-5 mx-auto"
+            />
+          }
+          variant="ghost"
+          type="button"
+          onClick={() => console.log("Facebook Sign In")}
+          className="w-full border border-primary"
+        />
       </div>
+     
 
       {redirectText && redirectHref && (
         
-          <p className="text-center text-sm text-white mt-6">
+          <p className="text-sm text-center text-gray-600 dark:text-gray-400 mt-2">
             {redirectText}{" "}
             <Link href={redirectHref} className="text-primary hover:underline">
               {btnText === "Reset Password" ? "Go back" : "Log In"}
@@ -121,3 +134,5 @@ const AuthForm = ({
 
 
 export default AuthForm;
+
+

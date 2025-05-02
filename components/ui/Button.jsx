@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Button = ({btnText, variant= "primary", onClick, className =""}) => {
+const Button = ({btnText, disabled=false,type="button", variant= "primary", onClick, className =""}) => {
     const baseStyle= "px-5 cursor-pointer  py-2.5 rounded-lg  font-semibold transition duration-200 text-sm";
     const variants = {
         primary: "bg-primary dark:bg-muted text-white hover:bg-primary/50",
@@ -9,10 +9,13 @@ const Button = ({btnText, variant= "primary", onClick, className =""}) => {
     };
   return (
     <button
+        type={type}
         onClick={onClick}
         className={`${baseStyle} ${variants[variant]} ${className}   `}
+        disabled={disabled}
     >
         {btnText}
+
     </button>
   )
 }

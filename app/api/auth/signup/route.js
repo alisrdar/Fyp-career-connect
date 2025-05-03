@@ -6,11 +6,15 @@ import { sendEmail } from "@/helpers/mailer";
 
 export async function POST(request) {
     try{
+        // db connectiion
         await DbCon()
+
+        // geting credentials from frontend
         const reqBody =await request.json();
         const {name, email, password} = reqBody
         console.log(reqBody);
 
+        // checking if email is present in db
         const user = await User.findOne({email});
 
         if(user) {

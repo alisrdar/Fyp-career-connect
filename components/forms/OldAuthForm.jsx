@@ -2,10 +2,10 @@
 "use client";
 import React from "react";
 import { useForm } from "react-hook-form";
-import Button from "../ui/Button"; // adjust path if needed
+import Button from "../ui/Button"; 
 import Link from "next/link";
 import Image from "next/image";
-import PasswordInput from "../ui/PasswordInput"; // adjust path if needed 
+import PasswordInput from "../ui/PasswordInput"; 
 
 const AuthForm = ({
   title = "Auth Form",

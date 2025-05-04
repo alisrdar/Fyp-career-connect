@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 //db connection
 await DbCon()
 
-export async function GET(params) {
+export async function GET() {
     try{
         const response = NextResponse.json({
             message: "Logged out successfully",

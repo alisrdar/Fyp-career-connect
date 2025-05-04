@@ -2,7 +2,7 @@ import { DbCon } from "@/lib/dbCon";
 import User from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
 import bcrytjs, { genSalt } from "bcryptjs"
-import { sendEmail } from "@/helpers/mailer";
+import jwt from "jsonwebtoken"
 
 // db connection
 await DbCon();
@@ -19,6 +19,7 @@ export async function POST(request) {
         // const salt = await bcrytjs.genSalt(10)
         // const hashedPassword = await bcrytjs.hash(password, salt)
 
+        // Finding user in db
         const user = await User.findOne({email})
 
         if(!user){
@@ -28,7 +29,8 @@ export async function POST(request) {
             );
         } 
 
-        const passswordMatch = bcrytjs.compare(password, user.password)
+        // checking credentials
+        const passswordMatch = await bcrytjs.compare(password, user.password)
         if(!passswordMatch){
             return NextResponse.json(
                 { error: "Invalid credentials"},
@@ -36,15 +38,31 @@ export async function POST(request) {
             )
         }
 
-        return NextResponse.json(
+        // jason web token logic
+        const tokenData = {
+            id : user._id,
+            name: user.name,
+            email: user.email
+        }
+
+        const token =  jwt.sign(tokenData, process.env.TOKEN_SECRET, {expiresIn: '1d'})
+
+        const response =  NextResponse.json(
             { 
                 message: "Sign in successful", 
-                success: true 
+                success: true
             },
             { status: 200 }
         )
 
-        
+        response.cookies.set("token", token, {
+            httpOnly: true,
+            secure: true,
+            path: "/",
+            maxAge: 3600,
+        })
+
+        return response;
     } catch (error){
         return NextResponse.json({error: error.message},
             {status: 500}

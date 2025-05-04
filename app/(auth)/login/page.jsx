@@ -2,6 +2,10 @@
 import React from 'react'
 import AuthForm from '@/components/forms/AuthForm'
 import { emailValidation, nameValidation, passwordValidation } from '@/lib/validateForm'
+import axios from 'axios'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
+import { Router } from 'lucide-react'
 
 const page = () => {
     const fields = [
@@ -20,14 +24,19 @@ const page = () => {
             validation: passwordValidation,
         }
     ];
-    const onSubmit = async (data, setError) => {
-        try {
-          await delay(2);
-          console.log(data);
-        } catch (err) {
-          setError("root", {
-            message: "Email is already taken",
-          });
+    const router = useRouter()
+    const onLogin = async (data, setError) => {
+        try{
+            const response = await axios.post("/api/auth/login", data);
+            console.log("login successful", response.data);
+            // toast.success("Login successful!");
+            router.push("/dashboard");
+            return true; // signal success
+        } catch(err){
+          console.log("login failed", err);
+          const message = err.response?.data?.error || "Sign Up failed";
+            setError("formError", { type: "manual", message });
+          return false;
         }
       };
   return (
@@ -36,9 +45,10 @@ const page = () => {
             title="Login"
             btnText="Login"
             fields={fields}
-            redirectText={"Don't have an account? Sign up"}
+            redirectText={"Don't have an account?"}
             redirectHref={"signup"}
-            onSubmit={onSubmit}
+            onSubmit={onLogin}
+            redirectLinkText={"Sign Up"}
         /> 
     </div>
   )

@@ -9,7 +9,7 @@ const Hero = ({ title, description, buttonText, backgroundImage, heroStyle }) =>
   const router = useRouter();
 
   const handleSignClick = () => {
-    router.push("/sign-up");
+    router.push("/signup");
   };
 
   const baseStyles =

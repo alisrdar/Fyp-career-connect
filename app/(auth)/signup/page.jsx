@@ -16,7 +16,8 @@ const SignupPage = () => {
       toast.success("Sign Up successful!");
       router.push("/login");
       return true;     // signal success
-    } catch (err) {
+    } 
+    catch (err) {
       const message = err.response?.data?.error || "Sign Up failed";
       if (message.toLowerCase().includes("email")) {
         setError("email", { type: "manual", message });

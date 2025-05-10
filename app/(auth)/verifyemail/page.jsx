@@ -55,6 +55,7 @@ const VerifyEmailPage = () => {
       }
     </div>
   )
+  
 }
 
 export default VerifyEmailPage

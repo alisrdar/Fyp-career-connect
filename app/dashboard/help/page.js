@@ -1,11 +1,11 @@
 import React from 'react'
 
-const FAQ = () => {
+const Help = () => {
   return (
     <div>
-      
+      I'm help
     </div>
   )
 }
 
-export default FAQ
+export default Help

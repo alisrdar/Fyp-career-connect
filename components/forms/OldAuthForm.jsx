@@ -2,7 +2,7 @@
 "use client";
 import React from "react";
 import { useForm } from "react-hook-form";
-import Button from "../ui/Button"; 
+import Button from "../Button"; 
 import Link from "next/link";
 import Image from "next/image";
 import PasswordInput from "../ui/PasswordInput"; 

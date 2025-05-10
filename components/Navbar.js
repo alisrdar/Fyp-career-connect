@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useDarkMode } from "@/context/ThemeContext";
+import ThemeToggler from "./ui/ThemeToggler";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useDarkMode } from "@/context/ThemeContext";
 
 const NavLinks = [
   { href: "/", label: "Home" },
@@ -16,7 +17,7 @@ const NavLinks = [
 ];
 
 const Navbar = () => {
-  const { theme, toggleTheme } = useDarkMode();
+  const {theme} = useDarkMode()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
@@ -73,13 +74,7 @@ const Navbar = () => {
             ))}
 
             {/* Theme Toggle (desktop) */}
-            <button
-              onClick={toggleTheme}
-              className="hidden md:inline-block p-2 rounded-full hover:bg-muted/20 transition-colors text-foreground-light dark:text-foreground-dark"
-              aria-label="Toggle Theme"
-            >
-              {theme === "dark" ? <Moon size={20} /> : <Sun size={20} />}
-            </button>
+            <ThemeToggler/>
           </ul> 
         </div>
       </div>
@@ -107,13 +102,7 @@ const Navbar = () => {
 
           {/* Theme Toggle (mobile) */}
           <div className="mt-4">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-muted/20 transition-colors text-foreground-light dark:text-foreground-dark"
-              aria-label="Toggle Theme"
-            >
-              {theme === "dark" ? <Moon size={20} /> : <Sun size={20} />}
-            </button>
+            <ThemeToggler />
           </div>
         </div>
       )}

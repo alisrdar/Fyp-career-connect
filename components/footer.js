@@ -32,7 +32,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-background-light dark:bg-background-dark text-foreground-light dark:text-foreground-dark px-6 pb-6 pt-12" >
-      <div className="max-w-7xl mx-auto flex flex-col gap-12 md:flex-row justify-between">
+      <div className=" mx-auto flex flex-col gap-12 md:flex-row justify-between">
         {/* Logo */}
         <div className="flex flex-col justify-center gap-4 max-w-sm">
           <Link href="/" className="flex items-center gap-4">

@@ -1,10 +1,13 @@
+"use client"
 import React from 'react'
 import StepCard from './StepCard'
 import ProgressItem from './ProgressItem'
 import ResourceItem from './ResourseItem'
 import { FileChartColumn,FileVideo, Compass , UserCircle} from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 const DashBoardWelcome = () => {
+    const router = useRouter()
     return (
         <div className="space-y-12  dark:bg-background-dark ">
             <div>
@@ -20,12 +23,16 @@ const DashBoardWelcome = () => {
                         title="Career Interest Survey"
                         description="Complete this survey to help us understand your interests and preferences."
                         primaryLabel="Start Survey"
+                        handlePrimaryClick={()=>router.push('/dashboard/survey')}
+                        handleSecondaryClick={() => console.log('Learn more clicked')}
                     />
                     <StepCard
                         step="2"
                         title="Skills Assessment Quiz"
                         description="Take this quiz to identify your strengths and areas for development."
                         primaryLabel="Take Quiz"
+                        handlePrimaryClick={()=>router.push('/dashboard/quiz')}
+                        handleSecondaryClick={() => console.log('Learn more clicked')}
                     />
                 </div>
             </section>

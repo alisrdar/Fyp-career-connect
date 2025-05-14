@@ -7,7 +7,7 @@ import ThemeToggler from '@/components/ui/ThemeToggler'
 import { ArrowLeft } from 'lucide-react'
 import { useDarkMode } from '@/context/ThemeContext'
 
-const QuizTopBar = ({ currentStep, totalSteps }) => {
+const QuizTopBar = ({ currentStep, totalSteps, exitText = "Quiz" }) => {
 
     const { theme } = useDarkMode()
     const router = useRouter()
@@ -19,7 +19,6 @@ const QuizTopBar = ({ currentStep, totalSteps }) => {
         <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark ">
             {/* Left Section: Logo & Back */}
             <div className="flex items-center gap-4">
-
 
                 <Link href="/dashboard">
                     <div className="flex items-center gap-2 ml-4">
@@ -35,8 +34,6 @@ const QuizTopBar = ({ currentStep, totalSteps }) => {
                 </Link>
             </div>
 
-
-
             {/* Right Section: Theme Toggle */}
             <div className='flex  items-center gap-4'>
                 {/* Center (optional): Progress Indicator */}
@@ -51,7 +48,7 @@ const QuizTopBar = ({ currentStep, totalSteps }) => {
                     className="flex items-center text-sm font-medium text-primary dark:text-accent hover:underline"
                 >
                     <ArrowLeft className="w-4 h-4 mr-1" />
-                    Exit Quiz
+                    Exit {exitText}
                 </button>
                 <div><ThemeToggler /></div>
 

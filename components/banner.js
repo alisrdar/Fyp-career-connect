@@ -13,7 +13,7 @@ const Banner = ({ title, description }) => {
           <h2 className="text-3xl md:text-4xl font-bold text-foreground-light dark:text-foreground-dark">
             {title}
           </h2>
-          <p className="mt-4 text-base md:text-lg text-muted-foreground max-w-2xl">
+          <p className="mt-4 text-base text-foreground-light dark:text-muted md:text-lg text-muted-foreground max-w-2xl">
             {description}
           </p>
         </div>

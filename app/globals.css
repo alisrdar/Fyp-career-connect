@@ -23,31 +23,3 @@ body {
   margin: 0;
   padding: 0;
 }
-/* :root {
-  --color-bg-light: #F6F1F1;
-  --color-bg-mid: #AFD3E2;
-  --color-primary: #19A7CE;
-  --color-secondary: #146C94;
-  --color-accent: #AFD3E2;
-  --color-darkblue: #0B2447;
-
-  --color-background: var(--color-bg-light);
-  --color-foreground: #0a0a0a;
-
-  --font-sans: 'Inter', sans-serif;
-  --font-mono: 'Fira Code', monospace;
-}
-
-.dark {
-  --color-background: #121212;
-  --color-foreground: #ededed;
-  --color-surface: #1E1E1E;
-  --color-muted: #CCCCCC;
-  --color-border: #2A2A2A;
-}
-
-body {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
-  font-family: var(--font-sans);
-} */

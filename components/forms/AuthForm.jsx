@@ -103,7 +103,7 @@ const AuthForm = ({
         
       </form>
       <p className="text-center  text-sm text-white/70 mt-2">or {title} with </p>
-      <div className="flex justify-center gap-4 mt-2">
+      <div className="flex max-w-3/4 mx-auto justify-center gap-4 mt-2">
         {socialProviders.map((provider) => ( 
           <Button
             key={provider}
@@ -119,7 +119,8 @@ const AuthForm = ({
             variant="ghost"
             type="button"
             onClick={() => console.log("Facebook Sign In")}
-            className="w-full border border-primary"
+            className="w-full  bg-white hover:bg-white/50 text-white rounded-3xl shadow-sm"
+            size="md"
           />
       
           ))}

@@ -1,10 +1,9 @@
 'use client'
-
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter,usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import ThemeToggler from '../ui/ThemeToggler'
+
 
 import {
     Home,
@@ -18,9 +17,10 @@ import {
     LogOut
 } from 'lucide-react'
 
-const SideBar = () => {
-    const [collapsed, setCollapsed] = useState(false)
+const SideBar = ({ onLogout, collapsed, setCollapsed }) => {
+
     const router = useRouter()
+    const pathname = usePathname()  // <-- get current path
 
     const toggleSidebar = () => setCollapsed(!collapsed)
 
@@ -36,20 +36,29 @@ const SideBar = () => {
         { label: 'Help Center', icon: HelpCircle, path: '/dashboard/help' }
     ]
 
-    const Item = ({ icon: Icon, label, path }) => (
-        <div
-            onClick={() => router.push(path)}
-            className="flex items-center gap-3 cursor-pointer px-2 py-2 rounded hover:bg-gray-300 dark:hover:bg-gray-800 transition"
-        >
-            <Icon className="w-5 h-5" />
-            {!collapsed && label}
-        </div>
-    )
+    const Item = ({ icon: Icon, label, path }) => {
+        const isActive = pathname === path
+
+        return (
+            <div
+                onClick={() => router.push(path)}
+                className={`flex items-center gap-3 cursor-pointer px-2 py-2 rounded transition
+                ${isActive ? 'bg-accent dark:bg-gray-700 font-semibold text-black dark:text-white'
+                        : 'hover:bg-gray-300 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300'}`}
+            >
+                <Icon className="w-5 h-5" />
+                {!collapsed && label}
+            </div>
+        )
+    }
 
     return (
         <aside
             className={`${collapsed ? 'w-20' : 'w-64'}
-       bg-white pt-6 dark:bg-surface p-4 flex flex-col justify-between min-h-screen  transition-all duration-300 ease-in-out`}
+            fixed top-0 left-0 h-screen z-50 
+            bg-white pt-6 dark:bg-surface p-4 
+            flex flex-col justify-between 
+            transition-all duration-300 ease-in-out`}
         >
             <nav className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -108,10 +117,10 @@ const SideBar = () => {
                 </div>
                 {!collapsed && (
                     <button
-                        onClick={() => console.log('Logging out...')} // Replace with your logout logic
-                        className="mt-1 text-md text-gray-500 dark:text-foreground-dark hover:text-black dark:hover:text-white transition"
+                        onClick={onLogout} // Replace with your logout logic
+                        className="mt-1 flex text-md text-gray-500 dark:text-foreground-dark hover:text-black cursor-pointer dark:hover:text-extra-muted transition"
                     >
-                        <LogOut className="w-4 h-4 inline-block mr-1" />
+                        <LogOut className="w-4 h-4" />
                         <span className='ml-4'>Logout</span>
                     </button>
                 )}

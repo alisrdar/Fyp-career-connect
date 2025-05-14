@@ -4,7 +4,7 @@ import mongoose from 'mongoose'
 const questionSchema = new mongoose.Schema({
   externalId: String, // original ID from dataset
   subject: String,
-  text: { type: String, required: true },
+  question: { type: String, required: true },
   options: [{ type: String }],
   correctAnswer: { type: String, required: true },
   article: String,

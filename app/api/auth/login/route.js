@@ -38,7 +38,7 @@ export async function POST(request) {
             )
         }
 
-        // jason web token logic
+        // json web token logic
         const tokenData = {
             id : user._id,
             name: user.name,
@@ -57,7 +57,9 @@ export async function POST(request) {
 
         response.cookies.set("token", token, {
             httpOnly: true,
-            secure: true,
+            // secure: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax", 
             path: "/",
             maxAge: 3600,
         })

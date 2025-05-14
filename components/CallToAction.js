@@ -1,6 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
-import Button from './Button'
+import Button from './ui/Button'
 import { useRouter } from 'next/router'
 
 const CallToAction = ({imgSrc, title, description, style="headings",onClick, orientation="flex-row", hasLists= false, listItems= []}) => {

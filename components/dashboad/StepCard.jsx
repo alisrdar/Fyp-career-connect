@@ -3,7 +3,7 @@ import Button from '@/components/ui/Button'
 
 const StepCard = ({ step, title, description, primaryLabel }) => {
     return (
-        <div className="bg-white dark:bg-surface text-gray-600 dark:text-muted p-4 sm:p-6 rounded-xl shadow transition hover:shadow-md w-full">
+        <div className="bg-white h- dark:bg-surface text-gray-600 dark:text-muted p-4 sm:p-6 rounded-xl shadow transition hover:shadow-md w-full">
             <p className="text-xs sm:text-sm text-gray-400 dark:text-muted">STEP {step}</p>
             <h4 className="text-base sm:text-lg font-semibold mt-1 text-foreground-light dark:text-foreground-dark">
                 {title}

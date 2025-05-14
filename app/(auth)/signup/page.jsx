@@ -5,6 +5,7 @@ import { emailValidation, nameValidation, passwordValidation } from '@/lib/valid
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import Button from '@/components/ui/Button'
 
 const SignupPage = () => {
   const router = useRouter()

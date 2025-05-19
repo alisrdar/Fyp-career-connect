@@ -127,7 +127,7 @@ export default function Home() {
               <h2 className="text-2xl sm:text-3xl font-bold text-foreground-light dark:text-foreground-dark">
                 FAQs
               </h2>
-              <p className="text-foreground-light dark:text-foreground-dark text-base font-light">
+              <p className="text-foreground-light dark:text-extra-muted text-base font-light">
                 Take your career assessment now and explore personalized
                 opportunities.
               </p>

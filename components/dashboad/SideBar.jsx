@@ -42,7 +42,7 @@ const SideBar = ({ onLogout, collapsed, setCollapsed }) => {
         return (
             <div
                 onClick={() => router.push(path)}
-                className={`flex items-center gap-3 cursor-pointer px-2 py-2 rounded transition
+                className={`flex items-center  gap-3 cursor-pointer px-2 py-2 rounded transition
                 ${isActive ? 'bg-accent dark:bg-gray-700 font-semibold text-black dark:text-white'
                         : 'hover:bg-gray-300 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300'}`}
             >
@@ -54,9 +54,9 @@ const SideBar = ({ onLogout, collapsed, setCollapsed }) => {
 
     return (
         <aside
-            className={`${collapsed ? 'w-20' : 'w-64'}
+            className={`${collapsed ? 'w-18' : 'w-64'}
             fixed top-0 left-0 h-screen z-50 
-            bg-white pt-6 dark:bg-surface p-4 
+            bg-white pt-6 dark:bg-surface py-4 px-2
             flex flex-col justify-between 
             transition-all duration-300 ease-in-out`}
         >
@@ -69,11 +69,12 @@ const SideBar = ({ onLogout, collapsed, setCollapsed }) => {
                     )}
                     <button
                         onClick={toggleSidebar}
-                        className="text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white"
+                        className="text-gray-500 text-center dark:text-gray-400 hover:text-black dark:hover:text-white"
                     >
                         {collapsed ? <SidebarOpen /> : <SidebarClose />}
                     </button>
                 </div>
+                
 
                 <div className="space-y-2 text-sm font-medium text-foreground-light dark:text-gray-300">
                     {navItems.map((item) => (

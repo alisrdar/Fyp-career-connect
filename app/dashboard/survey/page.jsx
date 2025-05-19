@@ -1,4 +1,3 @@
-// components/survey/SurveyPage.jsx
 "use client"
 import { useState, useEffect } from 'react'
 import QuizHeader from '@/components/dashboad/quiz/QuizHeader'
@@ -25,31 +24,29 @@ export default function SurveyPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
-  // Load saved answers from localStorage on first mount
   useEffect(() => {
     const saved = localStorage.getItem('surveyResponses')
     if (saved) setAnswers(JSON.parse(saved))
     fetchQuestions()
   }, [])
 
-  // Persist answers on every change
   useEffect(() => {
     localStorage.setItem('surveyResponses', JSON.stringify(answers))
   }, [answers])
-
-  const persistAnswers = (newAnswers) => {
-    setAnswers(newAnswers)
-    localStorage.setItem('surveyResponses', JSON.stringify(newAnswers))
-  }
 
   async function fetchQuestions() {
     setLoading(true)
     try {
       const res = await fetch('/api/dashboard/survey/questions', { credentials: 'include' })
-      const { questions } = await res.json()
-      setQuestions(questions)
+      const json = await res.json()
+      if (json && Array.isArray(json.questions)) {
+        setQuestions(json.questions)
+      } else {
+        setError("Invalid response format from server.")
+      }
     } catch (e) {
       console.error(e)
+      setError("Failed to load questions.")
     } finally {
       setLoading(false)
     }
@@ -62,20 +59,19 @@ export default function SurveyPage() {
   const allAnswered = total > 0 && Object.keys(answers).length === total
 
   function handleSelect(questionId, option) {
-    const updated = { ...answers, [questionId]: option }
-    persistAnswers(updated)
+    setAnswers(prev => ({ ...prev, [questionId]: option }))
   }
 
   function handleNext() {
-    if ((currentPage + 1) * questionsPerPage < questions.length) {
-      setCurrentPage(currentPage + 1)
+    if ((currentPage + 1) * questionsPerPage < total) {
+      setCurrentPage(prev => prev + 1)
       setError("")
     }
   }
 
   function handlePrev() {
     if (currentPage > 0) {
-      setCurrentPage(currentPage - 1)
+      setCurrentPage(prev => prev - 1)
       setError("")
     }
   }
@@ -86,10 +82,7 @@ export default function SurveyPage() {
       return
     }
 
-    const payload = Object.entries(answers).map(([qid, answer]) => ({
-      questionId: qid,
-      answer
-    }))
+    const payload = Object.entries(answers).map(([questionId, answer]) => ({ questionId, answer }))
 
     try {
       await fetch('/api/dashboard/survey/submit', {
@@ -98,9 +91,8 @@ export default function SurveyPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ responses: payload })
       })
-
       localStorage.removeItem('surveyResponses')
-      // Redirect or show confirmation
+      // Redirect or confirmation logic goes here
     } catch (e) {
       console.error(e)
       setError('Submission failed. Please try again.')
@@ -114,7 +106,10 @@ export default function SurveyPage() {
     <div className="min-h-screen bg-muted/10 dark:bg-background p-4">
       <div className="max-w-3xl mx-auto bg-white dark:bg-background-dark rounded-2xl shadow-xl p-6 space-y-6">
         <QuizTopBar exitText='Survey' />
-        <QuizHeader title="Interest Survey" description="Tell us about your interests and preferences to help us recommend the best career paths for you." />
+        <QuizHeader
+          title="Interest Survey"
+          description="Tell us about your interests and preferences to help us recommend the best career paths for you."
+        />
 
         {currentQuestions.map((q) => (
           <div key={q._id} className="mb-6">
@@ -141,7 +136,12 @@ export default function SurveyPage() {
         />
 
         <QuestionCounter current={start + 1} total={total} />
-        <ProgressTracker current={start + 1} total={total} />
+
+        {/* Option A: Remove ProgressTracker or... */}
+        {/* <ProgressTracker /> */}
+
+        {/* Option B: Update ProgressTracker to accept actual data */}
+      
       </div>
     </div>
   )

@@ -14,24 +14,38 @@ const Button = ({
   onClick,
   className = "",
 }) => {
-  const baseStyle =
-    "rounded-lg font-semibold transition duration-200 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary/40 hover:shadow-sm active:scale-[.98]";
+  const baseStyle = `
+    rounded-lg font-medium transition-all duration-200
+    focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+    disabled:cursor-not-allowed disabled:opacity-50
+    hover:shadow-sm active:scale-[.98] cursor-pointer transition-colors
+  `;
 
   const sizeVariants = {
     sm: "px-3 py-1.5 text-sm",
-    md: "px-5 py-2.5 text-sm",
-    lg: "px-7 py-3 text-base",
+    md: "px-5 py-2 text-sm",
+    lg: "px-6 py-3 text-base",
   };
 
   const variants = {
-    primary:
-      "bg-primary text-white dark:bg-muted hover:bg-primary/90 dark:hover:bg-muted/80 focus-visible:ring-primary/60",
-
-    secondary:
-      "bg-transparent border border-primary text-primary hover:bg-primary/10 hover:text-primary dark:border-muted dark:text-muted dark:hover:bg-muted/20 dark:hover:text-muted",
-
-    ghost:
-      "bg-transparent text-primary dark:text-muted hover:bg-primary/5 hover:text-primary dark:hover:bg-muted/10 dark:hover:text-muted"
+    primary: `
+      bg-primary text-white
+      hover:bg-primary/90
+      dark:bg-muted dark:text-white dark:hover:bg-muted/80
+      focus-visible:ring-primary/60
+    `,
+    secondary: `
+      border border-primary text-primary bg-transparent
+      hover:bg-accent/20 hover:text-primary
+      dark:border-muted dark:text-muted dark:hover:bg-muted/20
+      focus-visible:ring-primary/40
+    `,
+    ghost: `
+      bg-transparent text-primary
+      hover:bg-primary/10
+      dark:text-muted dark:hover:bg-muted/10
+      focus-visible:ring-primary/30
+    `,
   };
 
   return (
@@ -42,7 +56,7 @@ const Button = ({
         baseStyle,
         sizeVariants[size],
         variants[variant],
-        fullWidth ? "w-full" : "",
+        fullWidth && "w-full",
         className
       )}
       disabled={disabled || loading}

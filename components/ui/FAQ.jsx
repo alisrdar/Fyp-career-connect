@@ -30,7 +30,7 @@ const FAQ = ({ title, description }) => {
           open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
         } overflow-hidden`}
       >
-        <div className="mt-2 text-sm font-light text-muted-foreground overflow-hidden">
+        <div className="mt-2 text-sm font-light text-muted dark:text-extra-muted/80 overflow-hidden">
           {description}
         </div>
       </div>

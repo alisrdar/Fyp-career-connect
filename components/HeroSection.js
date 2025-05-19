@@ -23,16 +23,16 @@ const HeroSection = ({
 
   return (
     <section className={`w-full max-w-screen-3xl mx-auto px-4 gap-12 sm:px-6 md:px-8 py-12 ${className}`}>
-      <div className={`flex ${layoutClass} items-center justify-between gap-8 md:gap-12`}>
+      <div className={`flex ${layoutClass} items-center  justify-between gap-8 md:gap-12`}>
         {/* Image Section */}
         {imageSrc && (
-          <div className="w-full md:w-1/2">
+          <div className="w-full md:w-1/2 ">
             <Image
               src={imageSrc}
               alt={imageAlt}
               width={600}
               height={400}
-              className="w-full h-auto rounded-lg shadow-md"
+              className="w-full h-auto rounded-lg shadow-md shadow-extra-muted"
               priority
             />
           </div>
@@ -59,7 +59,8 @@ const HeroSection = ({
               <Button
                 btnText={secondaryBtnText}
                 onClick={secondaryBtnClick}
-                variant="ghost"
+                variant="secondary"
+                size="lg"
               />
             )}
           </div>

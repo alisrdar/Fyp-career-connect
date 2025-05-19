@@ -5,7 +5,7 @@ import Image from "next/image";
 import Button from "./ui/Button";
 import { useRouter } from "next/navigation";
 
-const Hero = ({ title, description, buttonText, backgroundImage, heroStyle }) => {
+const Hero = ({ title, description, buttonText, backgroundImage ="/images/HeroImage2.png", heroStyle }) => {
   const router = useRouter();
 
   const handleSignClick = () => {

@@ -109,11 +109,12 @@ export default function QuizPage() {
             selected={selected}
             onSelect={setSelected} />
         </div>
-        <div className="flex justify-between items-center mt-4">
+        <div className="flex flex-wrap flex-col md:flex-row md:justify-between  gap-4 mt-4">
           <Controls
             onSubmit={handleSubmit}
             onSkip={fetchNextQuestion}
-            disabled={!selected} />
+            disabled={!selected} 
+          />
           <ScoreStreak score={progress?.correct * 50 || 0} streak={2} />
         </div>
         <div className="pt-6 border-t border-border">

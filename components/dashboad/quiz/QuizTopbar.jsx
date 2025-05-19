@@ -16,7 +16,7 @@ const QuizTopBar = ({ currentStep, totalSteps, exitText = "Quiz" }) => {
         theme === "dark" ? "/pgec_logo_white_Svg.png" : "/pegcLogo_black.png";
 
     return (
-        <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark ">
+        <header className="flex flex-col md:flex-row space-y-2 sm:space-y-0 items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark transition-colors ">
             {/* Left Section: Logo & Back */}
             <div className="flex items-center gap-4">
 
@@ -27,15 +27,14 @@ const QuizTopBar = ({ currentStep, totalSteps, exitText = "Quiz" }) => {
                             alt="Logo"
                             width={40}
                             height={40}
-
                         />
-                        <span className="text-lg font-bold text-gray-800 dark:text-white">Career Connect</span>
+                        <span className="text-lg font-bold text-gray-800 dark:text-white hidden sm:inline">Career Connect</span>
                     </div>
                 </Link>
             </div>
 
             {/* Right Section: Theme Toggle */}
-            <div className='flex  items-center gap-4'>
+            <div className='flex sm:flex-row items-start  gap-2 sm:gap-4 text-sm'>
                 {/* Center (optional): Progress Indicator */}
                 {currentStep && totalSteps && (
                     <div className="text-sm mr-4 font-medium text-muted-foreground dark:text-gray-300">
@@ -45,12 +44,15 @@ const QuizTopBar = ({ currentStep, totalSteps, exitText = "Quiz" }) => {
                 {/* Back Button */}
                 <button
                     onClick={() => router.push('/dashboard')}
-                    className="flex items-center text-sm font-medium text-primary dark:text-accent hover:underline"
+                    className="flex items-center text-primary dark:text-accent hover:underline"
                 >
                     <ArrowLeft className="w-4 h-4 mr-1" />
                     Exit {exitText}
                 </button>
-                <div><ThemeToggler /></div>
+
+                <div>
+                    <ThemeToggler />
+                </div>
 
             </div>
 

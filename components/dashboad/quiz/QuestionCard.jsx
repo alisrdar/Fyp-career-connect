@@ -4,8 +4,10 @@ import { Info } from 'lucide-react'
 
 export default function QuestionCard({ question }) {
   const [showSupport, setShowSupport] = useState(false)
+  const [showArticle, setArticle] = useState(false)
 
   const toggleSupport = () => setShowSupport(prev => !prev)
+  const toggleArticle = () => setArticle(prev => !prev)
 
   return (
     <>
@@ -28,7 +30,14 @@ export default function QuestionCard({ question }) {
           </div>
 
           {question.article && (
-            <p className="mt-2 text-gray-700  dark:text-muted">{question.article}</p>
+            <button
+              onClick={toggleArticle}
+              className='ml-2 text-muted-foreground hover:text-foreground transition-colors'
+              aria-label='Toggle Article'
+            >
+              <Info className='hover:text-primary dark:text-extra-muted/80 cursor-pointer' size={18}
+              />
+            </button>
           )}
 
           {question.support && showSupport && (

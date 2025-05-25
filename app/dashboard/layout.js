@@ -1,11 +1,37 @@
-import React from 'react';
+// app/dashboard/layout.jsx (ya pages/dashboard/_app.jsx)
+"use client";
 
-const DashboardLayout = ({ children }) => {
+import Sidebar from "@/components/dashboad/SideBar";
+import MobileHeader from "@/components/dashboad/MobileHeader";
+import { DashboardProvider, useDashboard } from "@/context/DashboardContext";
+import { UserProvider } from "@/context/UserContext"
+
+function InnerLayout({ children }) {
+  const { collapsed, setCollapsed, sidebarOpen, setSidebarOpen, handleLogout } = useDashboard();
+
   return (
-    <div style={{  minHeight: '100vh', fontFamily: 'Arial, sans-serif' }}>
-      {children}
+    <div className="min-h-screen flex bg-gray-50 dark:bg-background-dark">
+      <Sidebar
+        collapsed={collapsed}
+        setCollapsed={setCollapsed}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        onLogout={handleLogout}
+      />
+      <main className={`flex-1 transition-all ${collapsed ? "sm:pl-20" : "sm:pl-54"}`}>
+        <MobileHeader />
+        {children}
+      </main>
     </div>
   );
-};
+}
 
-export default DashboardLayout;
+export default function DashboardLayout({ children }) {
+  return (
+    <DashboardProvider>
+      <UserProvider> 
+        <InnerLayout>{children}</InnerLayout>
+      </UserProvider>
+    </DashboardProvider>
+  );
+}

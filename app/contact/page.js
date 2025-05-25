@@ -22,7 +22,7 @@ const Contact = () => {
   const miniContactList = [
     { Icon: Mail, contact: "careerconnect@gmail.com" },
     { Icon: Phone, contact: "051 45607890" },
-    { Icon: MapPin, message: "Islamabad" },
+    { Icon: MapPin, contact: "Islamabad" },
   ]
 
 
@@ -108,21 +108,21 @@ const Contact = () => {
           buttonText={"Learn More"}
         />
       </section>
-      <section className='my-12  px-6 '>
+      <section className='my-12 mb-6 px-6 '>
         <ContactText />
       </section>
 
-      <section className='my-12 px-6'>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-32 py-6 lg:px-8">
+      <section className='my-6 px-2'>
+        <div className="grid grid-cols-1 lg:grid-cols-4 px-8 gap-20 py-6 lg:px-6">
           {/* Contact Cards */}
-          <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-2">
             {contactList.map((item) => (
               <ContactCard key={item.title} {...item} />
             ))}
           </div>
 
           {/* Image Section */}
-          <div className="p-2 rounded-xl col-span-1 lg:col-span-2 dark:bg-surface dark:border-border shadow-sm lg:h-full h-100 w-8/9 ml-auto">
+          <div className="p-2 rounded-xl col-span-2 lg:col-span-3 dark:bg-surface dark:border-border shadow-sm lg:h-full h-100 w-8/9 lg:ml-auto">
 
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6311.6026892901!2d72.72451446695352!3d33.78835652883327!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38dfa7edf75be731%3A0xb25856312ba59bc4!2sPunjab%20college%20of%20excellence%20in%20commerce%20wah%20cantt!5e0!3m2!1sen!2s!4v1747683268922!5m2!1sen!2s"
@@ -140,7 +140,7 @@ const Contact = () => {
 
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-16 px-12 pr-18 py-16">
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-16 px-6 pr-18 py-16">
         <div className="flex flex-col gap-10">
           <ContactText
             title='Contact Us'

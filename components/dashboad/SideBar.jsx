@@ -1,134 +1,207 @@
+// components/Sidebar.jsx
 'use client'
-import { useRouter,usePathname } from 'next/navigation'
-import Link from 'next/link'
+
+import React from 'react'
+import { useRouter, usePathname } from 'next/navigation'
 import Image from 'next/image'
 import ThemeToggler from '../ui/ThemeToggler'
-
-
+import { useDarkMode } from '@/context/ThemeContext'
+import Link from 'next/link'
+import { LogOut } from 'lucide-react'
 import {
-    Home,
-    FileText,
-    Route,
-    BookMarked,
-    User2,
-    HelpCircle,
-    SidebarClose,
-    SidebarOpen,
-    LogOut
-} from 'lucide-react'
+    HomeIcon,
+    DocumentTextIcon,
+    MapIcon,
+    BookmarkIcon,
+    UserIcon,
+    QuestionMarkCircleIcon,
+    Bars3Icon,
+    XMarkIcon,
+    ChevronRightIcon,
+} from '@heroicons/react/24/outline'
 
-const SideBar = ({ onLogout, collapsed, setCollapsed }) => {
+const navSections = [
+    {
+        title: 'Main',
+        items: [
+            { label: 'Dashboard', icon: HomeIcon, path: '/dashboard' },
+            { label: 'Assessments', icon: DocumentTextIcon, path: '/quiz' },
+            { label: 'Career Paths', icon: MapIcon, path: '/dashboard/recommendations' },
+            { label: 'Resources', icon: BookmarkIcon, path: '/resources' },
+        ],
+    },
+    {
+        title: 'General',
+        items: [
+            { label: 'Profile & Settings', icon: UserIcon, path: '/dashboard/profile' },
+            { label: 'Help Center', icon: QuestionMarkCircleIcon, path: '/dashboard/help' },
+        ],
+    },
+]
 
+const NavItem = ({ icon: Icon, label, isActive, collapsed, onClick }) => (
+    <button
+        onClick={onClick}
+        className={
+            `w-full flex items-center gap-3 rounded transition-colors duration-200 focus:outline-none  ` +
+            (isActive
+                ? 'bg-white shadow dark:bg-less-dark text-gray-900 dark:text-white'
+                : 'hover:bg-white hover:shadow  dark:hover:bg-less-dark text-gray-600 dark:text-gray-300') +
+            (collapsed ? ' justify-center py-2' : ' py-2 px-4')
+        }
+    >
+        <Icon
+            className={`w-6 h-6 flex-shrink-0 1 cursor-pointer 
+                 ${isActive ? 'fill-current stroke-gray-100 dark:stroke-less-dark' : 'fill-none stroke-current'}
+            `}
+            
+
+        />
+        {!collapsed && <span className="flex-1 text-sm text-left">{label}</span>}
+    </button>
+)
+
+export default function Sidebar({ sidebarOpen, setSidebarOpen, collapsed, setCollapsed, onLogout }) {
+    const { theme } = useDarkMode()
     const router = useRouter()
-    const pathname = usePathname()  // <-- get current path
+    const pathname = usePathname()
 
-    const toggleSidebar = () => setCollapsed(!collapsed)
+    const closeMobile = () => setSidebarOpen(false)
+    const toggleDesktop = () => setCollapsed(!collapsed)
 
-    const navItems = [
-        { label: 'Dashboard', icon: Home, path: '/dashboard' },
-        { label: 'Assessments', icon: FileText, path: '/dashboard/quiz' },
-        { label: 'Career Paths', icon: Route, path: '/dashboard/recommendations' },
-        { label: 'Resources', icon: BookMarked, path: '/resources' }
-    ]
-
-    const bottomItems = [
-        { label: 'Profile & Settings', icon: User2, path: '/dashboard/profile' },
-        { label: 'Help Center', icon: HelpCircle, path: '/dashboard/help' }
-    ]
-
-    const Item = ({ icon: Icon, label, path }) => {
-        const isActive = pathname === path
-
-        return (
-            <div
-                onClick={() => router.push(path)}
-                className={`flex items-center  gap-3 cursor-pointer px-2 py-2 rounded transition
-                ${isActive ? 'bg-accent dark:bg-gray-700 font-semibold text-black dark:text-white'
-                        : 'hover:bg-gray-300 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300'}`}
-            >
-                <Icon className="w-5 h-5" />
-                {!collapsed && label}
-            </div>
-        )
-    }
+    const logoSrc =
+        theme === "dark" ? "/pgec_logo_white_Svg.png" : "/pegcLogo_black.png";
 
     return (
-        <aside
-            className={`${collapsed ? 'w-18' : 'w-64'}
-            fixed top-0 left-0 h-screen z-50 
-            bg-white pt-6 dark:bg-surface py-4 px-2
-            flex flex-col justify-between 
-            transition-all duration-300 ease-in-out`}
-        >
-            <nav className="space-y-6">
-                <div className="flex items-center justify-between">
-                    {!collapsed && (
-                        <h1 className="text-xl font-bold text-foreground-light dark:text-foreground-dark">
-                            Career Connect
-                        </h1>
-                    )}
-                    <button
-                        onClick={toggleSidebar}
-                        className="text-gray-500 text-center dark:text-gray-400 hover:text-black dark:hover:text-white"
-                    >
-                        {collapsed ? <SidebarOpen /> : <SidebarClose />}
-                    </button>
-                </div>
-                
+        <>
+            <aside
+                className={`
+                fixed top-0 left-0 h-full z-50
+                bg-gray-100 dark:bg-surface
+                flex flex-col
+                transform transition-transform duration-300
+                border-r border-gray-200 dark:border-gray-800
+                ${sidebarOpen ? 'translate-x-0' : '-translate-x-full sm:translate-x-0'}
+                w-64 ${collapsed ? 'sm:w-18' : 'sm:w-54'}
+            `}
 
-                <div className="space-y-2 text-sm font-medium text-foreground-light dark:text-gray-300">
-                    {navItems.map((item) => (
-                        <Item key={item.label} {...item} />
-                    ))}
-                </div>
+            >
+                <button
+                    onClick={toggleDesktop}
+                    aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                    className={`
+                        hidden lg:flex md:flex sm:flex
+                        absolute top-4
+                         items-center justify-center
+                        w-8 h-8
+                        bg-white dark:bg-surface
+                        border border-gray-200 dark:border-gray-700
+                        rounded-full
+                        shadow-md
+                        transition-transform
+                        ${collapsed
+                            ? '-right-4 rotate-0'         /* collapsed: arrow points right */
+                            : '-right-4 rotate-180'       /* expanded: arrow points left */
+                        }
+        `}
+                >
+                    <ChevronRightIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                </button>
+                {/* Toggle & Title */}
+                <div className="flex items-center justify-between px-4 sm:px-0 py-3 ">
 
-
-                <div className="mt-8 space-y-2 text-sm font-medium text-foreground-light dark:text-gray-300">
-
-                    {bottomItems.map((item) => (
-                        <Item key={item.label} {...item} />
-                    ))}
-                    <div className='flex items-center justify-between  py-2 '>
-                        <ThemeToggler />
-                    </div>
-                </div>
-            </nav>
-
-
-
-            <div className="mt-8 text-sm text-gray-600 dark:text-muted">
-
-                <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
+                    <Link href={"/dashboard"} className='px-4 cursor-pointer flex flex-shrink-0 items-center gap-2'>
                         <Image
-                            src="/avatar.jpg" // Replace with dynamic image or placeholder
-                            alt="Profile"
-                            className="w-10 h-10 rounded-full object-cover"
-                            width={40}
-                            height={40}
+                            src={logoSrc}
+                            alt="Career Connect Logo"
+                            width={!collapsed ? 42 : 38}
+                            height={!collapsed ? 42 : 38}
+                            className="object-contain"
+                            priority
                         />
                         {!collapsed && (
-                            <div className="flex flex-col">
-                                <span className="font-semibold text-gray-800 dark:text-white">Alex Johnson</span>
-                                <span className="text-xs text-gray-500 dark:text-gray-400">Student</span>
+                            <h2 className='text-md font-bold text-foreground-light dark:text-foreground-dark pt-2'>
+                                Career Connect
+                            </h2>
+                        )}
+                    </Link>
+                    <button className="sm:hidden" onClick={closeMobile}>
+                        <XMarkIcon className="w-6 h-6 text-gray-700 dark:text-gray-300" />
+                    </button>
+                </div>
+
+                {/* Sections */}
+                <div className="flex-1 overflow-y-auto space-y-4">
+
+                    {navSections.map((section) => (
+                        <div key={section.title} className="px-2">
+                            {!collapsed &&
+                                <p className="px-4 py-1 text-xs font-semibold text-gray-400 uppercase">
+                                    {section.title}
+                                </p>}
+                            <div className="space-y-1">
+                                {section.items.map((item) => (
+                                    <NavItem
+                                        key={item.path}
+                                        {...item}
+                                        isActive={pathname === item.path}
+                                        collapsed={collapsed}
+                                        onClick={() => {
+                                            router.push(item.path)
+                                            closeMobile()
+                                        }}
+                                    />
+                                ))}
                             </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Bottom */}
+                <div className="px-2 pb-3 space-y-1">
+
+
+                    {!collapsed &&
+                        (<p className="px-4 my-0 text-xs font-semibold text-gray-400 uppercase">
+                            System
+                        </p>)
+                    }
+                    <div className="flex items-center gap-2 px-2">
+                        <ThemeToggler className='text-gray-700' />
+                        {!collapsed && (
+                            <span className="text-sm text-gray-700 dark:text-gray-300">Dark mode</span>
                         )}
                     </div>
 
-                </div>
-                {!collapsed && (
-                    <button
-                        onClick={onLogout} // Replace with your logout logic
-                        className="mt-1 flex text-md text-gray-500 dark:text-foreground-dark hover:text-black cursor-pointer dark:hover:text-extra-muted transition"
-                    >
-                        <LogOut className="w-4 h-4" />
-                        <span className='ml-4'>Logout</span>
-                    </button>
-                )}
-            </div>
 
-        </aside>
+                    <div className="space-y-1.5">
+
+                        <div className="flex items-center gap-2 p-2">
+                            <Image
+                                src="https://cdn0.iconfinder.com/data/icons/education-and-school-filled-outline-1/128/boy_student_study_school_man_high_school_avatar-512.png"
+                                alt="Profile"
+                                width={36}
+                                height={36}
+                                className="rounded-full object-cover"
+                            />
+                            {!collapsed &&
+                                (<div>
+                                    <p className="text-sm font-medium text-gray-900 dark:text-white">Alex Johnson</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">Student</p>
+                                </div>
+                                )}
+                        </div>
+
+                        <button
+                            onClick={onLogout}
+                            className="flex items-center gap-4 w-full py-0 px-4 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition"
+                        >
+                            <LogOut className="w-5 h-5" />
+                            {!collapsed && <span className="text-sm">Log out</span>}
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </>
     )
 }
-
-export default SideBar

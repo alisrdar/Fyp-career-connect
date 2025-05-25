@@ -40,9 +40,9 @@ export default function QuizPage() {
     }
 
     setLoading(true)
-    setMessage(null)
+    setMessage(null)   
     try {
-      const res = await fetch('/api/dashboard/quiz/nextquestion', { credentials: 'include' })
+      const res = await fetch('/api/quiz/nextquestion', { credentials: 'include' })
       const data = await res.json()
 
       if (data.done) {
@@ -61,7 +61,7 @@ export default function QuizPage() {
 
   const fetchProgress = async () => {
     try {
-      const res = await fetch('/api/dashboard/quiz/progress', { credentials: 'include' })
+      const res = await fetch('/api/quiz/progress', { credentials: 'include' })
       const data = await res.json()
       setProgress(data)
     } catch { }
@@ -70,7 +70,7 @@ export default function QuizPage() {
   const handleSubmit = async () => {
     if (!selected) return
     try {
-      await fetch('/api/dashboard/quiz/submit', {
+      await fetch('/api/quiz/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ questionId: question.id, selectedAnswer: selected }),

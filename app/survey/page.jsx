@@ -37,7 +37,7 @@ export default function SurveyPage() {
   async function fetchQuestions() {
     setLoading(true)
     try {
-      const res = await fetch('/api/dashboard/survey/questions', { credentials: 'include' })
+      const res = await fetch('/api/survey/questions', { credentials: 'include' })
       const json = await res.json()
       if (json && Array.isArray(json.questions)) {
         setQuestions(json.questions)

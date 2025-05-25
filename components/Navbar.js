@@ -10,7 +10,6 @@ import { useDarkMode } from "@/context/ThemeContext";
 
 const NavLinks = [
   { href: "/", label: "Home" },
-  { href: "/services", label: "Services" },
   { href: "/resources", label: "Resources" },
   { href: "/about", label: "About us" },
   { href: "/contact", label: "Contact us" },

@@ -34,7 +34,7 @@ const page = () => {
             return true; // signal success
         } catch(err){
           console.log("login failed", err);
-          const message = err.response?.data?.error || "Sign Up failed";
+          const message = err.response?.data?.error || "Login failed";
             setError("formError", { type: "manual", message });
           return false;
         }

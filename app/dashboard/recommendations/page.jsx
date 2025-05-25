@@ -1,10 +1,9 @@
-'use client'
-import React, { useState } from "react"
+
 import Card from "@/components/ui/Card"
-import SideBar from "@/components/dashboad/SideBar"
+
 
 const CareerRecommendations = () => {
-  const [collapsed, setCollapsed] = useState(false)
+ 
 
   const topMatches = [
     {
@@ -38,11 +37,9 @@ const CareerRecommendations = () => {
 
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <SideBar collapsed={collapsed} setCollapsed={setCollapsed} onLogout={() => console.log('Logout clicked')} />
 
       {/* Main Content */}
-      <main className={`flex-1 transition-all duration-300 ${collapsed ? 'ml-20' : 'ml-64'}`}>
+      <main className={`flex-1 transition-all duration-300 ml-8`}>
         <div className="max-w-6xl mx-auto p-6 space-y-10">
           <header>
             <h1 className="text-3xl font-bold mb-2 text-foreground-light dark:text-foreground-dark">Your Career Recommendations</h1>

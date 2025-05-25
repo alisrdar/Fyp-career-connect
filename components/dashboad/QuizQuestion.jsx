@@ -15,7 +15,7 @@ export default function QuizQuestion() {
                 setError(null);
                 // const res = await axios.get('/api/dashboard/quiz/nextquestion', { withCredentials: true });
 
-                const res = await fetch('/api/dashboard/quiz/nextquestion', { credentials: 'include' });
+                const res = await fetch('/api/quiz/nextquestion', { credentials: 'include' });
                 const data = await res.json();
                 console.log('API res:', res.status, data);
                 if (!res.ok) throw new Error(data.error || data.message);

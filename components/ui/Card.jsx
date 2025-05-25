@@ -8,8 +8,9 @@ const Card = ({
   title,
   description,
   linkText = "Read more",
-  href ,
+  href,
   className = "",
+  children,
 }) => {
   const baseStyle =
     "bg-white dark:bg-surface rounded-md overflow-hidden flex flex-col flex-wrap shadow-md dark:shadow-[0_4px_12px_rgba(255,255,255,0.05)]";
@@ -49,14 +50,25 @@ const Card = ({
             {description}
           </p>
         )}
-        {linkText && href && (
+        {/* {linkText && href && (
           <a
             href={href}
             className="text-primary hover:underline text-sm font-medium"
           >
             {linkText} →
           </a>
-        )}
+        )} */}
+        {children
+          ? children                // ← render children, agar koi hue tu
+          : linkText && href && (   // fallback original link
+            <a
+              href={href}
+              className="text-primary hover:underline text-sm font-medium"
+            >
+              {linkText} →
+            </a>
+          )
+        }
       </div>
     </div>
   );

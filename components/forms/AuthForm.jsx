@@ -28,10 +28,10 @@ const AuthForm = ({
 
   const handleFormSubmit = async (data) => {
     const didSucceed = await onSubmit(data, setError);
-     if (didSucceed) {
-       if (onSuccess) onSuccess(); 
-       reset();
-     }
+    if (didSucceed) {
+      if (onSuccess) onSuccess();
+      reset();
+    }
   };
 
   return (
@@ -50,41 +50,53 @@ const AuthForm = ({
       </h2>
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5">
         {/* hidden register for formError */}
-      <input type="hidden" {...register("formError")} />
+        <input type="hidden" {...register("formError")} />
 
-      {fields.map(({ name, label, type = "text", validation, placeholder }) => (
-        <div key={name}>
-          {type === "password" ? (
-            <PasswordInput
-              id={name}
-              label={label}
-              name={name}
-              register={register}
-              validation={validation}
-              error={errors[name]}
-            />
-          ) : (
-            <div className="flex flex-col">
-              <label
-                htmlFor={name}
-                className="text-sm font-medium text-white  dark:text-gray-300 mb-1"
-              >
-                {label}
-              </label>
-              <input
-                id={name}
-                type={type}
-                {...register(name, validation)}
-                placeholder={placeholder}
-                className="p-2.5 rounded-xl border border-gray-300 bg-white/70 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary w-full"
-              />
-              {errors[name] && (
-                <span className="text-red-500 text-xs mt-1">{errors[name].message}</span>
-              )}
-            </div>
-          )}
-        </div>
-      ))}
+        {fields.map(({ name, label, type = "text", validation, placeholder }) => (
+          <div key={name}>
+            {type === "password" ? (
+              <>
+                <PasswordInput
+                  id={name}
+                  label={label}
+                  name={name}
+                  register={register}
+                  validation={validation}
+                  error={errors[name]}
+                />
+                {btnText == "Login" && (
+                  <div className="text-right mt-1">
+                    <Link
+                      href="/forgot-password"
+                      className="text-sm text-blue-400 hover:underline"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="flex flex-col">
+                <label
+                  htmlFor={name}
+                  className="text-sm font-medium text-white  dark:text-gray-300 mb-1"
+                >
+                  {label}
+                </label>
+                <input
+                  id={name}
+                  type={type}
+                  {...register(name, validation)}
+                  placeholder={placeholder}
+                  className="p-2.5 rounded-xl border border-gray-300 bg-white/70 text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary w-full"
+                />
+                {errors[name] && (
+                  <span className="text-red-500 text-xs mt-1">{errors[name].message}</span>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
 
         {/* global form error */}
         {errors.formError && (
@@ -93,18 +105,18 @@ const AuthForm = ({
           </p>
         )}
 
-        <Button 
-          btnText={isSubmitting ? "Loading..." : btnText} 
-          variant="primary" 
-          className="w-full" 
+        <Button
+          btnText={isSubmitting ? "Loading..." : btnText}
+          variant="primary"
+          className="w-full"
           disabled={isSubmitting}
           type="submit"
         />
-        
+
       </form>
       <p className="text-center  text-sm text-white/70 mt-2">or {title} with </p>
       <div className="flex max-w-3/4 mx-auto justify-center gap-4 mt-2">
-        {socialProviders.map((provider) => ( 
+        {socialProviders.map((provider) => (
           <Button
             key={provider}
             btnText={
@@ -122,19 +134,19 @@ const AuthForm = ({
             className="w-full  bg-white hover:bg-white/50 text-white rounded-3xl shadow-sm"
             size="md"
           />
-      
-          ))}
+
+        ))}
       </div>
 
       {redirectText && redirectHref && (
-        
-          <p className="text-center text-sm text-white mt-6">
-            {redirectText}{" "}
-            <Link href={redirectHref} className="text-primary hover:underline">
-              {btnText === "Reset Password" ? "Go back" : redirectLinkText}
-            </Link>
-          </p>
-        
+
+        <p className="text-center text-sm text-white mt-6">
+          {redirectText}{" "}
+          <Link href={redirectHref} className="text-primary hover:underline">
+            {btnText === "Reset Password" ? "Go back" : redirectLinkText}
+          </Link>
+        </p>
+
       )}
     </div>
   );

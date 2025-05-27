@@ -126,7 +126,7 @@ export default function DashboardWelcome() {
           </section>
 
           {/* Resources */}
-          <section className="px-4">
+          <section className="px-4 mb-4">
             <h3 className="text-2xl font-semibold mb-4 text-foreground-light dark:text-foreground-dark">
               Recommended Resources
             </h3>

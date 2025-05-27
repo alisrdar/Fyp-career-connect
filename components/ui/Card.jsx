@@ -62,6 +62,7 @@ const Card = ({
           ? children                // ← render children, agar koi hue tu
           : linkText && href && (   // fallback original link
             <a
+              target="_blank"
               href={href}
               className="text-primary hover:underline text-sm font-medium"
             >

@@ -14,7 +14,7 @@ export default function ProfileHero({ user, onAvatarChange, title }) {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full ">
       {/* Cover banner */}
       <div className={`relative w-full h-30 
         bg-gradient-to-tr 
@@ -22,7 +22,7 @@ export default function ProfileHero({ user, onAvatarChange, title }) {
 dark:from-gray-800 dark:via-gray-900 dark:to-black
 
         `}>
-        {/* cover edit */}
+        
       </div>
 
       {/* Profile card */}

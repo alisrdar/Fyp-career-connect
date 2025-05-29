@@ -1,7 +1,6 @@
 // components/About/Step.jsx
 import React from 'react';
-import StepIcon from './stepIcon';
-
+import StepIcon from './StepIcon';
 const Step = ({ step, title, description }) => (
   <div className="flex flex-col items-start space-y-4 md:flex-row md:items-center md:space-x-6">
     <StepIcon step={step} />

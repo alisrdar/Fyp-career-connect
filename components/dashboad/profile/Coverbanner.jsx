@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { Plus, Settings, Share2, Mail, Edit2 } from "lucide-react";
 
-export default function ProfileHero({ user, onAvatarChange, title }) {
+export default function Coverbanner({ user, onAvatarChange, title }) {
   const avatarSrc =
     user.avatarUrl ||
     "https://cdn0.iconfinder.com/data/icons/education-and-school-filled-outline-1/128/boy_student_study_school_man_high_school_avatar-512.png";

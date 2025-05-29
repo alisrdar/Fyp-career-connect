@@ -3,7 +3,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import ProfileHero from "./profile/CoverBanner";
+import Coverbanner from "./profile/Coverbanner";
 import StepCard from "./StepCard";
 import ProgressItem from "./ProgressItem";
 import ResourceItem from "./ResourseItem";
@@ -100,7 +100,7 @@ export default function DashboardWelcome() {
     <div className="min-h-screen flex bg-gray-50 dark:bg-background-dark">
       <div className="flex-1 flex flex-col transition-all duration-300">
         {/* Hero */}
-        <ProfileHero
+        <Coverbanner
           user={user}
           title={`Welcome! ${user.name}`}
         />

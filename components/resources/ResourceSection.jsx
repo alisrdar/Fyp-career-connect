@@ -1,6 +1,7 @@
 // components/resources/ResourceSection.jsx
 import Card from "../ui/Card";
 import React from 'react'
+import { useSearchParams } from "next/navigation";
 
 const ResourceSection = ({data}) => {
   return (

@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import FAQSection from "@/components/FAQSection";
 import Button from "@/components/ui/Button";
 import Banner from "@/components/banner";
+import BackToTopButton from "@/components/ui/BacktoTheTop";
 
 export default function Home() {
   const homepageFaqs = [
@@ -143,6 +144,7 @@ export default function Home() {
             </div>
           </div>
         </section>
+        <BackToTopButton/>
       </div>
       <Footer />
     </>

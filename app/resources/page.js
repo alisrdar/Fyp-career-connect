@@ -11,6 +11,7 @@ import ResourceSection from "@/components/resources/ResourceSection";
 import { useRouter } from "next/navigation";
 import BackToTopButton from "@/components/ui/BacktoTheTop";
 
+
 export default function ResourcesPage() {
   const router = useRouter();
   const [q, setQ] = useState("");

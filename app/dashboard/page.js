@@ -6,12 +6,9 @@ const Home = () => {
 
   return (
     <div className="min-h-screen flex bg-gray-50 dark:bg-background-dark">
-      
-
       <main
         className={`
-          flex-1 flex flex-col transition-all duration-300
-          
+          flex-1 flex flex-col transition-all duration-300 
         `}
       >
         {/* Actual content */}

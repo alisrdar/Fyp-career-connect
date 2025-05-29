@@ -1,37 +1,34 @@
-import mongoose from 'mongoose';
+import { NextResponse } from "next/server";
+import { DbCon } from "@/lib/dbCon";
+import User from "@/models/User";
+import { sendEmail } from "@/helpers/mailer"; // your token-hashing email helper
 
-let cached = global.mongoose; 
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
+export async function POST(request) {
+  try {
+    await DbCon();
 
-export async function DbCon() {
-  if (cached.conn) {
-    console.log("Using existing MongoDB connection");
-    return cached.conn;
-  }
+    const { email } = await request.json();
 
-  if (!process.env.MONGODB_URI) {
-    throw new Error("MONGODB_URI missing in env");
-  }
+    // Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
 
-  if (!cached.promise) {
-    console.log("Creating new MongoDB connection promise");
-    cached.promise = mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      bufferCommands: false,      // disable query buffering
-      bufferMaxEntries: 0,        // if you really wanna block
-    }).then((mongooseInstance) => {
-      console.log("MongoDB Connected successfully");
-      return mongooseInstance;
-    }).catch(err => {
-      console.error("MongoDB connection error:", err);
-      throw err;
+    // Call your email helper
+    await sendEmail({
+      email,
+      emailType: "RESET",
+      userId: user._id,
     });
-  }
 
-  const mongooseInstance = await cached.promise;
-  cached.conn = mongooseInstance;
-  return cached.conn;
+    return NextResponse.json({
+      message: "Reset password email sent successfully",
+      success: true,
+    });
+
+  } catch (error) {
+    console.error("Forgot Password Error:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }

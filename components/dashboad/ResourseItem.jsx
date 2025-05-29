@@ -2,15 +2,15 @@
 'use client'
 
 import React from 'react'
-import { Bookmark, Bookmark as BookmarkIcon } from 'lucide-react'
+import { Bookmark as BookmarkIcon, ChevronRight } from 'lucide-react'
 
-const ResourceItem = ({
+export default function ResourceItem({
   title,
   meta,
-  onClick,            // jab user row pe click kare
-  onBookmarkClick,    // jab user bookmark icon pe click kare
-  bookmarked = false, // toggle state
-}) => {
+  onClick,
+  onBookmarkClick,
+  bookmarked = false,
+}) {
   return (
     <div
       onClick={onClick}
@@ -18,27 +18,27 @@ const ResourceItem = ({
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && onClick()}
       className="
-        flex justify-between items-center
-        p-4 border-b border-gray-200 dark:border-border
-        bg-background-light dark:bg-background-dark
-        cursor-pointer
-        transition-colors duration-200
-        hover:bg-gray-100 dark:hover:bg-gray-800
-        focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+        relative flex items-center p-6 bg-white dark:bg-surface
+        rounded-2xl shadow-md hover:shadow-lg
+        transition-shadow duration-200 cursor-pointer
+        focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
       "
       aria-label={`Open resource: ${title}`}
     >
       {/* Text */}
-      <div className="flex flex-col">
-        <span className="font-medium text-foreground-light dark:text-foreground-dark">
+      <div className="flex-1">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           {title}
-        </span>
-        <span className="text-sm text-gray-500 dark:text-muted mt-1">
+        </h3>
+        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
           {meta}
-        </span>
+        </p>
       </div>
 
-      {/* Bookmark btn */}
+      {/* Arrow Icon */}
+      <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-500 ml-4" />
+
+      {/* Bookmark Button */}
       <button
         onClick={(e) => {
           e.stopPropagation()
@@ -46,22 +46,20 @@ const ResourceItem = ({
         }}
         aria-label={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
         className="
-          p-2 rounded-full
-          transition-colors duration-200
-          hover:bg-gray-200 dark:hover:bg-gray-700
-          focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+          absolute top-4 right-4 p-2 bg-gray-100 dark:bg-less-dark
+          rounded-full transition-colors duration-200
+          hover:bg-gray-200 dark:hover:bg-gray-600
+          focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
         "
       >
         <BookmarkIcon
           className={`w-5 h-5 ${
             bookmarked
               ? 'text-yellow-500 dark:text-yellow-400'
-              : 'text-gray-500 dark:text-muted'
+              : 'text-gray-400 dark:text-gray-500'
           }`}
         />
       </button>
     </div>
   )
 }
-
-export default ResourceItem

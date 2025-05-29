@@ -1,11 +1,12 @@
 'use client'
-import { useRouter} from 'next/navigation'
-import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useState, useEffect} from 'react'
 import React from 'react'
 import ResourceSection from '@/components/resources/ResourceSection'
 import { articleData } from '@/lib/data/educationArticles'
 import SearchBar from '@/components/resources/SearchBar'
 import BreadcrumbNav from '@/components/resources/BreadcrumbNav'
+import BackToTopButton from '@/components/ui/BacktoTheTop'
 
 const ResourcePage = () => {
     const router = useRouter()
@@ -29,6 +30,7 @@ const ResourcePage = () => {
                     data={articleData}
                 />
             </div>
+            <BackToTopButton/>
         </div>
     )
 }

@@ -8,6 +8,7 @@ import ThemeToggler from '../ui/ThemeToggler'
 import { useDarkMode } from '@/context/ThemeContext'
 import Link from 'next/link'
 import { LogOut } from 'lucide-react'
+import { useUser } from '@/context/UserContext'
 import {
     HomeIcon,
     DocumentTextIcon,
@@ -46,16 +47,14 @@ const NavItem = ({ icon: Icon, label, isActive, collapsed, onClick }) => (
             `w-full flex items-center gap-3 rounded transition-colors duration-200 focus:outline-none  ` +
             (isActive
                 ? 'bg-white shadow dark:bg-less-dark text-gray-900 dark:text-white'
-                : 'hover:bg-white hover:shadow  dark:hover:bg-less-dark text-gray-600 dark:text-gray-300') +
+                : 'hover:bg-white hover:shadow  dark:hover:bg-less-dark text-gray-800 dark:text-gray-300') +
             (collapsed ? ' justify-center py-2' : ' py-2 px-4')
         }
     >
         <Icon
             className={`w-6 h-6 flex-shrink-0 1 cursor-pointer 
                  ${isActive ? 'fill-current stroke-gray-100 dark:stroke-less-dark' : 'fill-none stroke-current'}
-            `}
-            
-
+            `}         
         />
         {!collapsed && <span className="flex-1 text-sm text-left">{label}</span>}
     </button>
@@ -65,6 +64,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, collapsed, setCol
     const { theme } = useDarkMode()
     const router = useRouter()
     const pathname = usePathname()
+    const {user, err, loading} = useUser()
 
     const closeMobile = () => setSidebarOpen(false)
     const toggleDesktop = () => setCollapsed(!collapsed)
@@ -178,7 +178,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, collapsed, setCol
 
                         <div className="flex items-center gap-2 p-2">
                             <Image
-                                src="https://cdn0.iconfinder.com/data/icons/education-and-school-filled-outline-1/128/boy_student_study_school_man_high_school_avatar-512.png"
+                                src={ user?.avatarUrl ||"https://cdn0.iconfinder.com/data/icons/education-and-school-filled-outline-1/128/boy_student_study_school_man_high_school_avatar-512.png"}
                                 alt="Profile"
                                 width={36}
                                 height={36}
@@ -186,7 +186,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, collapsed, setCol
                             />
                             {!collapsed &&
                                 (<div>
-                                    <p className="text-sm font-medium text-gray-900 dark:text-white">Alex Johnson</p>
+                                    <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name}</p>
                                     <p className="text-xs text-gray-500 dark:text-gray-400">Student</p>
                                 </div>
                                 )}

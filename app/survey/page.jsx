@@ -7,6 +7,7 @@ import OptionsList from '@/components/dashboad/quiz/OptionList'
 import SurveyControls from '@/components/dashboad/survey/SurveyControls'
 import ProgressTracker from '@/components/dashboad/quiz/ProgressTracker'
 import QuizTopBar from '@/components/dashboad/quiz/QuizTopbar'
+import { useRouter } from 'next/navigation'
 
 export default function SurveyPage() {
   const likertScale = [
@@ -16,6 +17,8 @@ export default function SurveyPage() {
     "Agree",
     "Strongly Agree"
   ]
+
+  const router = useRouter()
 
   const questionsPerPage = 3
   const [currentPage, setCurrentPage] = useState(0)
@@ -85,14 +88,27 @@ export default function SurveyPage() {
     const payload = Object.entries(answers).map(([questionId, answer]) => ({ questionId, answer }))
 
     try {
-      await fetch('/api/dashboard/survey/submit', {
+      await fetch('/api/survey/submit', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ responses: payload })
       })
+      const scoreRes = await fetch('api/survey/score', {
+        method: 'POST',
+        credentials:'include'
+      })
+
+      const scoreJson = await scoreRes.json()
+      if (!scoreRes.ok) {
+        console.warn('Scoring failed:', scoreJson?.error)
+        setError('Could not process results. Please try again later.')
+        return
+      }
       localStorage.removeItem('surveyResponses')
       // Redirect or confirmation logic goes here
+      router.push('/dashboard/recommendations')
+
     } catch (e) {
       console.error(e)
       setError('Submission failed. Please try again.')
@@ -137,10 +153,7 @@ export default function SurveyPage() {
 
         <QuestionCounter current={start + 1} total={total} />
 
-        {/* Option A: Remove ProgressTracker or... */}
-        {/* <ProgressTracker /> */}
-
-        {/* Option B: Update ProgressTracker to accept actual data */}
+      
       
       </div>
     </div>

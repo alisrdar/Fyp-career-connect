@@ -52,21 +52,31 @@ export default function DashboardWelcome() {
   const progressItems = [
     {
       id: "profile",
-      icon: UserCircle,
       title: "Profile Completed",
       detail: "You’ve added your bio and photo",
       status: "completed",
-      action: () => console.log("Profile clicked"),
+      percent: 100,             // ← add this
+      action: () => console.log("/profile"),
     },
     {
       id: "survey",
-      icon: Compass,
       title: "Survey Pending",
       detail: "Tell us more about your interests",
       status: "inProgress",
+      percent: 50,              // ← and this
       action: () => router.push("/survey"),
     },
+    {
+      id: "Quiz",
+      title: "Quiz Pending",
+      detail: "Tell us more about your skills",
+      status: "inProgress",
+      percent: 70,              // ← and this
+      action: () => router.push("/quiz"),
+    },
+
   ];
+
 
   // Resources
   const resources = [
@@ -113,20 +123,24 @@ export default function DashboardWelcome() {
             <h3 className="text-2xl font-semibold mb-4 text-foreground-light dark:text-foreground-dark">
               Your Progress
             </h3>
-            <div className="space-y-4">
-              {progressItems.map((item) => (
-                <div key={item.id} className="flex items-center gap-4">
-                  <div className="bg-white dark:bg-surface p-3 rounded-xl">
-                    <item.icon className="h-6 w-6 text-accent" />
-                  </div>
-                  <ProgressItem {...item} />
-                </div>
+
+            {/* make this a vertical stack with proper gaps */}
+            <div className="flex flex-row flex-wrap gap-4 px-auto space-x-4">
+              {progressItems.map(item => (
+                <ProgressItem
+                  key={item.id}
+                  title={item.title}
+                  detail={item.detail}
+                  percent={item.percent}     // ← new
+                  locked={item.status === 'locked'}
+                  onClick={item.action}
+                />
               ))}
             </div>
           </section>
 
           {/* Resources */}
-          <section className="px-4 mb-4">
+          <section className="px-4 mb-12">
             <h3 className="text-2xl font-semibold mb-4 text-foreground-light dark:text-foreground-dark">
               Recommended Resources
             </h3>

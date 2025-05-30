@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import ThemeToggler from "@/components/ui/ThemeToggler";
 import { ArrowLeft } from "lucide-react";
 import { useDarkMode } from "@/context/ThemeContext";
-
 const QuizTopBar = ({ currentStep, totalSteps, exitText = "Quiz" }) => {
   const { theme } = useDarkMode();
   const router = useRouter();

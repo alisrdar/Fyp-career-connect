@@ -163,7 +163,7 @@ const Contact = () => {
             </div>
           </div>
           <section className="max-w-3xl  mx-auto p-6 bg-gray-100 dark:bg-surface rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold mb-4 text-foreground-dark dark:text-foreground-dark">Reach Out to Us</h2>
+          <h2 className="text-2xl font-bold mb-4 text-foreground-light dark:text-foreground-dark">Reach Out to Us</h2>
           <ContactForm
             gridFields={contactFields.slice(0, 4)}
             fields={contactFields.slice(4)}

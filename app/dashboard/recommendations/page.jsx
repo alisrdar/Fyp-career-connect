@@ -150,7 +150,7 @@ export default function CareerRecommendations() {
 
   return (
     <div className="flex min-h-screen dark:bg-background-dark bg-gray-50">
-      <main className="flex-1 ml-8 transition-all duration-300">
+      <main className="flex-1 transition-all duration-300">
         <div className="max-w-6xl mx-auto p-6 space-y-10">
           {/* Header */}
           <header>

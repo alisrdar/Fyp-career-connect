@@ -48,7 +48,7 @@ export default function QuestionCard({ question }) {
         </div>
       )}
 
-      {question.text && (
+      {question.text && showArticle && (
         <div className="p-4 sm:p-6 md:p-8 bg-gray-100 dark:bg-surface/60 rounded-xl my-6 dark:shadow-less-dark shadow-sm">
           <h2 className="text-base sm:text-lg md:text-lg font-medium text-foreground-light dark:text-white">
             {question.text}

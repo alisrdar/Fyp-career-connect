@@ -10,7 +10,6 @@ import ContactForm from "@/components/forms/ContactForm";
 import { emailValidation } from "@/lib/validateForm";
 import Footer from "@/components/footer";
 import Banner from "@/components/banner";
-import ContactModalForm from "@/components/About/ContactModalForm";
 
 const Contact = () => {
   const contactList = [

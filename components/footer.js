@@ -52,7 +52,7 @@ const Footer = () => {
           <div></div>
           <FooterColumn title="Resources" links={resourcesLinks}/>
           <FooterColumn title="About" links={aboutLinks} />
-          <FooterColumn title="Support" links={contactUs} />
+          <FooterColumn title="Contact Us" links={contactUs} />
         </div>
       </div>
 

@@ -27,7 +27,7 @@ const navSections = [
         items: [
             { label: 'Dashboard', icon: HomeIcon, path: '/dashboard' },
             { label: 'Assessments', icon: DocumentTextIcon, path: '/quiz' },
-            { label: 'Career Paths', icon: MapIcon, path: '/dashboard/recommendations' },
+            { label: 'Recommendations', icon: MapIcon, path: '/dashboard/recommendations' },
             { label: 'Resources', icon: BookmarkIcon, path: '/dashboard/resources' },
         ],
     },

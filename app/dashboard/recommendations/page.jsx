@@ -90,27 +90,31 @@ export default function CareerRecommendations() {
 
 
   const traitDescriptions = {
-    Openness:
-      `You love new ideas, creativity, and exploring different experiences.
-      Seedha bolun to, tera dimaag hamesha naye ideas, art, aur wild experiments ki talash mein rehta hai. Routine tujhe bore karta hai.`,
+  Openness: `
+    You love new ideas, creativity, and exploring different experiences.
+    Simply put, your mind is always seeking new ideas, art, and adventurous experiments, and you find routine boring.
+  `,
 
-    Conscientiousness:
-      `You’re super organized, reliable, and always meet your goals.
-      Tu ekdum planner, deadline-destroyer hai. Har kaam neat, proper aur time pe finish karta hai—zero compromise.`,
+  Conscientiousness: `
+    You’re super organized, reliable, and always meet your goals.
+    You are a meticulous planner and deadline conqueror. You complete every task neatly, properly, and on time—no compromises.
+  `,
 
-    Extraversion:
-      `You gain energy around people and enjoy social settings.
-      Logon ke beech tu full on energy bomb hai. Party, networking—sab mein tu apna alter ego nikal leta hai.`,
+  Extraversion: `
+    You gain energy around people and enjoy social settings.
+    You are an energy powerhouse in social situations. Whether it’s partying or networking, you bring out your lively alter ego.
+  `,
 
-    Agreeableness:
-      `You’re friendly, caring, and get along easily with others.
-      Tu help-karne wala guru hai, tension-free vibes share karta hai, aur conflicts se bachna uska full-time job hai.`,
+  Agreeableness: `
+    You’re friendly, caring, and get along easily with others.
+    You’re naturally helpful and spread calm, friendly vibes. Avoiding conflicts feels like your full-time job.
+  `,
 
-    Neuroticism:
-      `You’re sensitive to stress and experience emotions intensely.
-      Low key tu stress se overthinker hai—choti si baat pe mood swings, over-analyzing aur anxiety ka season start ho jata hai.`
-  };
-
+  Neuroticism: `
+    You’re sensitive to stress and experience emotions intensely.
+    You tend to overthink when stressed—small issues can trigger mood swings, over-analysis, and bouts of anxiety.
+  `
+};
 
   const topMatches = [
     {

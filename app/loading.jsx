@@ -8,7 +8,7 @@ export default function Loading() {
     <div className="flex items-center justify-center h-screen">
       {/* spinner */}
       <svg
-        className="animate-spin h-8 w-8 text-blue-500"
+        className="animate-spin h-8 w-8 text-primary dark:text-secondary"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"

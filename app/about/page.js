@@ -24,22 +24,22 @@ export default function About() {
   const teamMembers = [
     {
       name: 'Muhammad Ali',
-      role: 'AI Lead',
-      avatarUrl: '/images/team/john.jpg',
+      role: 'AI Lead & frontend dev',
+      avatarUrl: '/images/ali.jpg',
       linkText: 'View Profile',
       linkHref: '/team/john',
     },
     {
       name: 'Ahmed Mustafa',
       role: 'Frontend Wizard',
-      avatarUrl: '/images/team/jane.jpg',
+      avatarUrl: '/images/Ahmed.jpg',
       linkText: 'View Profile',
       linkHref: '/team/jane',
     },
     {
       name: 'Jawad Ul Hassan',
-      role: 'Frontend Wizard',
-      avatarUrl: '/images/team/jane.jpg',
+      role: 'Frontend dev',
+      avatarUrl: '/images/jawad.jpg',
       linkText: 'View Profile',
       linkHref: '/team/jane',
     },

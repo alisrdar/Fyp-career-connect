@@ -24,7 +24,7 @@ export default function About() {
   const teamMembers = [
     {
       name: 'Muhammad Ali',
-      role: 'AI Lead & frontend dev',
+      role: 'Frontend dev & AI Lead',
       avatarUrl: '/images/ali.jpg',
       linkText: 'View Profile',
       linkHref: '/team/john',

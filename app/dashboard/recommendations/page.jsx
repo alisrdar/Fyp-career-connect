@@ -11,8 +11,8 @@ import {
   Radar,
   Legend,
   Tooltip,
+  ResponsiveContainer
 } from 'recharts'
-import html2canvas from 'html2canvas'
 import { toPng } from 'html-to-image'
 import jsPDF from 'jspdf'
 
@@ -88,33 +88,32 @@ export default function CareerRecommendations() {
     }
   }
 
-
   const traitDescriptions = {
-  Openness: `
-    You love new ideas, creativity, and exploring different experiences.
-    Simply put, your mind is always seeking new ideas, art, and adventurous experiments, and you find routine boring.
-  `,
+    Openness: `
+      You love new ideas, creativity, and exploring different experiences.
+      Simply put, your mind is always seeking new ideas, art, and adventurous experiments, and you find routine boring.
+    `,
 
-  Conscientiousness: `
-    You’re super organized, reliable, and always meet your goals.
-    You are a meticulous planner and deadline conqueror. You complete every task neatly, properly, and on time—no compromises.
-  `,
+    Conscientiousness: `
+      You're super organized, reliable, and always meet your goals.
+      You are a meticulous planner and deadline conqueror. You complete every task neatly, properly, and on time—no compromises.
+    `,
 
-  Extraversion: `
-    You gain energy around people and enjoy social settings.
-    You are an energy powerhouse in social situations. Whether it’s partying or networking, you bring out your lively alter ego.
-  `,
+    Extraversion: `
+      You gain energy around people and enjoy social settings.
+      You are an energy powerhouse in social situations. Whether it's partying or networking, you bring out your lively alter ego.
+    `,
 
-  Agreeableness: `
-    You’re friendly, caring, and get along easily with others.
-    You’re naturally helpful and spread calm, friendly vibes. Avoiding conflicts feels like your full-time job.
-  `,
+    Agreeableness: `
+      You're friendly, caring, and get along easily with others.
+      You're naturally helpful and spread calm, friendly vibes. Avoiding conflicts feels like your full-time job.
+    `,
 
-  Neuroticism: `
-    You’re sensitive to stress and experience emotions intensely.
-    You tend to overthink when stressed—small issues can trigger mood swings, over-analysis, and bouts of anxiety.
-  `
-};
+    Neuroticism: `
+      You're sensitive to stress and experience emotions intensely.
+      You tend to overthink when stressed—small issues can trigger mood swings, over-analysis, and bouts of anxiety.
+    `
+  };
 
   const topMatches = [
     {
@@ -151,11 +150,15 @@ export default function CareerRecommendations() {
   return (
     <div className="flex min-h-screen dark:bg-background-dark bg-gray-50">
       <main className="flex-1 transition-all duration-300">
-        <div className="max-w-6xl mx-auto p-6 space-y-10">
+        <div className="max-w-6xl mx-auto p-3 sm:p-6 space-y-6 sm:space-y-10">
           {/* Header */}
-          <header>
-            <h1 className="text-3xl font-bold mb-2 text-foreground-light dark:text-foreground-dark">Your Career Recommendations</h1>
-            <p className="text-lg text-muted-foreground dark:text-extra-muted">Based on your quiz, here’s your personality breakdown and top career matches.</p>
+          <header className="text-center sm:text-left">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 text-foreground-light dark:text-foreground-dark">
+              Your Career Recommendations
+            </h1>
+            <p className="text-base sm:text-lg text-muted-foreground dark:text-extra-muted">
+              Based on your quiz, here's your personality breakdown and top career matches.
+            </p>
           </header>
 
           {/* Back to the top */}
@@ -163,99 +166,105 @@ export default function CareerRecommendations() {
 
           {/* Personality Report */}
           {!loadingReport && hasReport && (
-            <div ref={reportRef} className="bg-white dark:bg-surface p-6 rounded-2xl shadow-xl">
-              <h2 className="text-2xl text-foreground-light dark:text-foreground-dark font-semibold mb-4">Your Personality Report</h2>
-              <p className="mb-4 text-lg text-muted dark:text-extra-muted">
+            <div ref={reportRef} className="bg-white dark:bg-surface p-4 sm:p-6 rounded-2xl shadow-xl">
+              <h2 className="text-xl sm:text-2xl text-foreground-light dark:text-foreground-dark font-semibold mb-4">
+                Your Personality Report
+              </h2>
+              <p className="mb-4 text-base sm:text-lg text-muted dark:text-extra-muted">
                 Your strongest personality trait is <strong>{strongestTrait}</strong>
                 {strongestScore !== null && (
                   <> with a score of <strong>{strongestScore.toFixed(2)}</strong>/5</>
                 )}!
               </p>
 
-              {/* Radar Chart */}
-              <RadarChart width={450} height={350} data={traitScores} className="mx-auto">
-                <PolarGrid stroke="#ddd" />
-                <PolarAngleAxis
-                  dataKey="trait"
-                  stroke="#666"
-                  tick={{ fill: '#75a1ff', fontSize: 14 }}
-                />
-                <PolarRadiusAxis
-                  domain={[0, 5]}
-                  axisLine={false}
-                  tick={{ fill: '#666', fontSize: 10 }}
-                />
-                <Radar
-                  name="Score"
-                  dataKey="score"
-                  stroke="#4F46E5"       /* line color */
-                  fill="#4F46E5"         /* area color */
-                  fillOpacity={0.3}      /* transparency */
-                  strokeWidth={2}
-                />
-                <Legend
-                  verticalAlign="top"
-                  wrapperStyle={{ color: '#333', fontSize: 14 }}
-                />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#fff', borderColor: '#ddd' }}
-                  itemStyle={{ color: '#333' }}
-                />
-              </RadarChart>
-
-
-              {/* Numeric Breakdown */}
-              {/* <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {traitScores.map(({ trait, score }) => (
-                  <div key={trait} className="p-3 bg-muted/20 dark:bg-surface rounded">
-                    <p className="font-medium text-foreground-light dark:text-foreground-dark">{trait}</p>
-                    <p className="text-xl font-semibold text-surface dark:text-extra-muted">{score.toFixed(2)}/5</p>
-                  </div>
-                ))}
-              </div> */}
+              {/* Radar Chart - Responsive */}
+              <div className="w-full h-64 sm:h-80 lg:h-96 mb-6">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart data={traitScores}>
+                    <PolarGrid stroke="#ddd" />
+                    <PolarAngleAxis
+                      dataKey="trait"
+                      stroke="#666"
+                      tick={{ fill: '#75a1ff', fontSize: 12 }}
+                      className="text-xs sm:text-sm"
+                    />
+                    <PolarRadiusAxis
+                      domain={[0, 5]}
+                      axisLine={false}
+                      tick={{ fill: '#666', fontSize: 8 }}
+                    />
+                    <Radar
+                      name="Score"
+                      dataKey="score"
+                      stroke="#4F46E5"
+                      fill="#4F46E5"
+                      fillOpacity={0.3}
+                      strokeWidth={2}
+                    />
+                    <Legend
+                      verticalAlign="top"
+                      wrapperStyle={{ color: '#333', fontSize: 12 }}
+                    />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: '#fff', borderColor: '#ddd', fontSize: 12 }}
+                      itemStyle={{ color: '#333' }}
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
 
               {/* Strongest-Trait Explanation */}
-              <div className="mt-6 p-4 bg-muted/20 dark:bg-surface rounded">
-                <h3 className="text-xl font-semibold text-foreground-light dark:text-foreground-dark">
-                  Your strongest personality trait is <span className="text-darkblue dark:text-foreground-dark">{strongestTrait}</span>!
+              <div className="mt-6 p-3 sm:p-4 bg-muted/20 dark:bg-surface rounded">
+                <h3 className="text-lg sm:text-xl font-semibold text-foreground-light dark:text-foreground-dark">
+                  Your strongest personality trait is{' '}
+                  <span className="text-darkblue dark:text-foreground-dark">{strongestTrait}</span>!
                 </h3>
-                <p className="mt-2 text-base text-muted dark:text-extra-muted">
+                <p className="mt-2 text-sm sm:text-base text-muted dark:text-extra-muted leading-relaxed">
                   {traitDescriptions[strongestTrait] || 'No description available for this trait.'}
                 </p>
               </div>
 
               {/* Download Button */}
-
-              <Button
-                className="mt-4 text-darkblue dark:text-primary"
-                variant="secondary"
-                onClick={handleDownload}
-                type='button'
-                size='lg'
-                btnText={"Download Report"}
-              />
+              <div className="mt-6 flex justify-center sm:justify-start">
+                <Button
+                  className="w-full sm:w-auto text-darkblue dark:text-primary"
+                  variant="secondary"
+                  onClick={handleDownload}
+                  type='button'
+                  size='lg'
+                  btnText={"Download Report"}
+                />
+              </div>
             </div>
           )}
 
           {/* Error or Prompt */}
-          {!loadingReport && error && <p className="text-center text-red-500">{error}</p>}
-          {!loadingReport && !hasReport && !error && <p className="text-center text-gray-600">Complete the survey to view your report.</p>}
+          {!loadingReport && error && (
+            <p className="text-center text-red-500 text-sm sm:text-base px-4">{error}</p>
+          )}
+          {!loadingReport && !hasReport && !error && (
+            <p className="text-center text-gray-600 text-sm sm:text-base px-4">
+              Complete the survey to view your report.
+            </p>
+          )}
 
           {/* Top Matches */}
           <section>
-            <h2 className="text-2xl font-semibold mb-4">Top Matches</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-center sm:text-left">
+              Top Matches
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
               {topMatches.map((match, i) => <Card key={i} {...match} />)}
             </div>
           </section>
 
           {/* Why These Recommendations */}
-          <section className="mt-12">
-            <h2 className="text-2xl font-bold mb-6 border-b-2 text-foreground-light dark:text-foreground-dark border-primary dark:border-muted pb-2">
+          <section className="mt-8 sm:mt-12">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 border-b-2 text-foreground-light dark:text-foreground-dark border-primary dark:border-muted pb-2 text-center sm:text-left">
               Why These Recommendations?
             </h2>
 
-            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {[
                 { icon: '🧠', title: 'Problem-Solving', desc: 'Creative solutions and empathy.' },
                 { icon: '🗣️', title: 'Communication', desc: 'Clear explanation of complex ideas.' },
@@ -263,24 +272,25 @@ export default function CareerRecommendations() {
               ].map(({ icon, title, desc }) => (
                 <li
                   key={title}
-                  className="flex items-start space-x-4 p-5 bg-white dark:bg-surface rounded-2xl shadow-md hover:shadow-xl transition-shadow"
+                  className="flex items-start space-x-3 sm:space-x-4 p-4 sm:p-5 bg-white dark:bg-surface rounded-2xl shadow-md hover:shadow-xl transition-shadow"
                 >
                   <div className="flex-shrink-0">
-                    <span className="inline-flex items-center justify-center w-10 h-10 bg-blue-100 dark:bg-accent dark:text-accent rounded-full text-xl">
+                    <span className="inline-flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-accent dark:text-accent rounded-full text-lg sm:text-xl">
                       {icon}
                     </span>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
                       {title}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-400">{desc}</p>
+                    <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+                      {desc}
+                    </p>
                   </div>
                 </li>
               ))}
             </ul>
           </section>
-
         </div>
       </main>
     </div>

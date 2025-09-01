@@ -6,6 +6,7 @@ export function middleware(request) {
   const path = request.nextUrl.pathname;
 
   const publicPaths = [
+    "/",
     "/login",
     "/signup",
     "/verifyemail",
@@ -44,5 +45,6 @@ export const config = {
     "/dashboard/:path*", // dashboard pages
     "/quiz/:path*", // quiz pages
     "/survey/:path*", // survey pages
+    "/recommendations/:path*"
   ],
 };

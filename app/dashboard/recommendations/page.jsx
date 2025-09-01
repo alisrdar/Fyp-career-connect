@@ -12,7 +12,7 @@ import {
   Legend,
   Tooltip,
 } from 'recharts'
-// import html2canvas from 'html2canvas'
+import html2canvas from 'html2canvas'
 import { toPng } from 'html-to-image'
 import jsPDF from 'jspdf'
 

@@ -6,13 +6,11 @@ export function middleware(request) {
   const path = request.nextUrl.pathname;
 
   const publicPaths = [
-    "/",
     "/login",
     "/signup",
     "/verifyemail",
     "/contact",
     "/about",
-    "/resources",
   ];
   const isPublicPath = publicPaths.includes(path);
 
@@ -24,7 +22,7 @@ export function middleware(request) {
   if (isPublicPath && token) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
-
+  
   // if not public and not logged in → signup
   if (!isPublicPath && !token) {
     return NextResponse.redirect(new URL("/signup", request.url));
@@ -46,6 +44,5 @@ export const config = {
     "/dashboard/:path*", // dashboard pages
     "/quiz/:path*", // quiz pages
     "/survey/:path*", // survey pages
-    "/resources/:path*", // resources pages
   ],
 };

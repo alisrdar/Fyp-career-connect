@@ -3,9 +3,10 @@ import User from "@/models/User";
 import { getDataFromToken } from "@/helpers/getDataFromToken";
 import { NextResponse } from "next/server";
 
-await DbCon();
+
 
 export async function POST(request) {
+    await DbCon();
     const userId= await getDataFromToken(request);
     const user = await User.findOne({_id: userId}).select("-password");
 

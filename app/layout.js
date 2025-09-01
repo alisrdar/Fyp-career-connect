@@ -3,7 +3,6 @@ import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/footer";
-import { icons } from "lucide-react";
 
 
 
@@ -21,9 +20,6 @@ export const metadata = {
   title: "Career Connect",
   description: "Unlock your potential and achieve your career goals with our Comprehensive counseling Services.",
   keywords: "Career Connect, Career Counseling, Career Guidance, AI-Powered Assessment, Personalized Guidance, Resource Library",
-  icons: {
-    icon: "pgec_logo_white_Svg.png"
-  }
 };
 
 

@@ -5,10 +5,11 @@ import bcrytjs, { genSalt } from "bcryptjs"
 import jwt from "jsonwebtoken"
 
 // db connection
-await DbCon();
+
 
 export async function POST(request) {
     try{
+        await DbCon();
         // getting email and pass from frontend
         const reqBody = await request.json()
         const {email, password} = reqBody;

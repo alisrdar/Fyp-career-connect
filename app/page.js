@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import FAQSection from "@/components/FAQSection";
 import Button from "@/components/ui/Button";
 import Banner from "@/components/banner";
+import BackToTopButton from "@/components/ui/BacktoTheTop";
 
 export default function Home() {
   const homepageFaqs = [
@@ -92,7 +93,7 @@ export default function Home() {
                 description="Discover your strengths and interests with our AI-powered career assessment tool. Get personalized insights to guide your career choices."
                 tag="AI Assessment"
                 linkText="Learn More"
-                href="/services/ai-assessment"
+                href="/quiz"
               />
               <Card
                 imageSrc="/images/PersonalizedGuidance.svg"
@@ -100,7 +101,7 @@ export default function Home() {
                 description="Receive tailored career guidance from our expert counselors. We help you navigate your career path with confidence."
                 tag="Career Guidance"
                 linkText="Learn More"
-                href="/services/career-guidance"
+                href="/dashboard"
               />
               <Card
                 imageSrc="/images/resourceLib2.svg"
@@ -143,6 +144,7 @@ export default function Home() {
             </div>
           </div>
         </section>
+        <BackToTopButton/>
       </div>
       <Footer />
     </>

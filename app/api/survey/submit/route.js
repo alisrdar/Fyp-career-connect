@@ -9,7 +9,7 @@ export async function POST(req) {
   try {
     await DbCon();
     const cookieStore = await cookies();
-    const token =  cookieStore.get("token")?.value;
+    const token = cookieStore.get("token")?.value;
     if (!token) {
       return NextResponse.json(
         { error: "Unauthorized: No token" },

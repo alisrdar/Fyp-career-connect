@@ -4,15 +4,15 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { DbCon } from "@/lib/dbCon";
 import PersonalityResponse from "@/models/PersonalityResponse";
-import PersonalityQuestion from "@/models/PersonalityQuestion";
-import { scorePersonalityFromDoc } from "../utils/scorePersonalityFromDoc";
-import PErsonalityResult from "@/models/PErsonalityResult";
+import PersonalityQuestion from "@/models/PersonalityQuestion.js";
+import { scorePersonalityFromDoc } from "../utils/scorePersonalityFromDoc.js";
+import PersonalityResult from "@/models/PersonalityResult.js";
 
 export async function POST() {
   try {
     await DbCon();
 
-    // 🔐 Auth check
+    //  Auth check
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
     if (!token)
@@ -20,7 +20,7 @@ export async function POST() {
 
     const { id: userId } = jwt.verify(token, process.env.TOKEN_SECRET);
 
-    // 📥 Find user's submitted survey answers
+    // Find user's submitted survey answers
     const saved = await PersonalityResponse.findOne({ userId }).lean();
     console.log(saved.responses)
 
@@ -31,11 +31,11 @@ export async function POST() {
       );
     }
 
-    // 🧠 Score their personality traits
+    // Score their personality traits
     const traitScores = await scorePersonalityFromDoc(saved.responses);
 
-    // 💾 Save or update the scored result in DB
-    await PErsonalityResult.findOneAndUpdate(
+    // Save or update the scored result in DB
+    await PersonalityResult.findOneAndUpdate(
       { userId },
       {
         userId,
@@ -45,7 +45,7 @@ export async function POST() {
       { upsert: true }
     );
 
-    // ✅ Return the scored result
+    //  Return the scored result
     return NextResponse.json({ success: true, traitScores }, { status: 200 });
   } catch (err) {
     console.error("Error scoring personality:", err);

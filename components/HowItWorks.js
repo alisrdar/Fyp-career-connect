@@ -1,5 +1,5 @@
 import React from 'react';
-import Step from './About/Step';
+import Step from './About/step';
 
 const defaultSteps = [
   {

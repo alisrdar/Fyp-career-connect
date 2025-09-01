@@ -23,13 +23,13 @@ const QuizTopBar = ({ currentStep, totalSteps, exitText = "Quiz" }) => {
     ">
       {/* Logo + Title */}
       <Link href="/dashboard">
-        <a className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <Image src={logoSrc} alt="Logo" width={36} height={36} />
           {/* hide text on xs, show on sm+ */}
           <span className="hidden sm:inline text-base font-bold text-gray-800 dark:text-white">
             Career Connect
           </span>
-        </a>
+        </div>
       </Link>
 
       {/* Progress + Exit + Theme toggle */}

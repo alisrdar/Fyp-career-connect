@@ -25,10 +25,7 @@ const Navbar = () => {
 
     const isActive = (href) => pathname === href;
   return (
-    <nav className="sticky top-0 left-0 w-full z-50
-                bg-background-light text-foreground-light 
-                dark:bg-background-dark dark:text-foreground-dark
-                shadow px-6 py-4 transition-all duration-300">
+    <nav className="bg-background-light/30 sticky top-0 z-50 text-foreground-light dark:bg-background-dark/40 backdrop-blur-lg  dark:text-foreground-dark shadow px-6 py-4 transition-all duration-300">
       <div className="flex items-center justify-between">
         {/* Logo */}
         <Link href={"/"} className="flex items-center gap-2 font-bold">

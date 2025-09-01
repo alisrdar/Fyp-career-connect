@@ -9,18 +9,22 @@ const Footer = () => {
   const logoSrc =
     theme === "dark" ? "/pgec_logo_white_Svg.png" : "/pegcLogo_black.png";
 
- 
+  const servicesLinks = [
+    { name: "Career Assessment", href: "#" },
+    { name: "Career Guidance", href: "#" },
+    { name: "Extensive Resources", href: "#" },
+  ];
   const aboutLinks = [
-    { name: "Our Mission", href: "/about" },
+    { name: "Our Mission", href: "#" },
     { name: "Terms of Service", href: "#" },
     { name: "Our Team", href: "#" },
   ];
   const resourcesLinks = [
-    { name: "Articles", href: "/resources" },
-    { name: "Career Paths", href: "#" },
+    { name: "Articles", href: "#" },
+    { name: "Webinars", href: "#" },
     { name: "Guides", href: "#" },
   ];
-  const contactUs = [
+  const supportLinks = [
     { name: "Help Center", href: "#" },
     { name: "Chat Support", href: "#" },
     { name: "FAQs", href: "#" },
@@ -49,10 +53,10 @@ const Footer = () => {
 
         {/* Link Columns */}
         <div className="lg:w-2/3 grid grid-cols-2 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          <div></div>
-          <FooterColumn title="Resources" links={resourcesLinks}/>
+          <FooterColumn title="Services" links={servicesLinks} />
+          <FooterColumn title="Resources" links={resourcesLinks} />
           <FooterColumn title="About" links={aboutLinks} />
-          <FooterColumn title="Contact Us" links={contactUs} />
+          <FooterColumn title="Support" links={supportLinks} />
         </div>
       </div>
 

@@ -5,7 +5,7 @@ import { emailValidation, nameValidation, passwordValidation } from '@/lib/valid
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
-import { Router } from 'lucide-react'
+import { useAuth } from '@/context/AuthContext'
 
 const page = () => {
     const fields = [
@@ -25,16 +25,19 @@ const page = () => {
         }
     ];
     const router = useRouter()
+    const { login } = useAuth()
     const onLogin = async (data, setError) => {
         try{
-            const response = await axios.post("/api/auth/login", data);
-            console.log("login successful", response.data);
-            // toast.success("Login successful!");
+            const ok = await login(data)
+            if (!ok) {
+              throw new Error("Login failed")
+            }
+            // toast.success("Login successful!")
             router.push("/dashboard");
             return true; // signal success
         } catch(err){
           console.log("login failed", err);
-          const message = err.response?.data?.error || "Login failed";
+          const message = err.response?.data?.error || err.message || "Login failed";
             setError("formError", { type: "manual", message });
           return false;
         }

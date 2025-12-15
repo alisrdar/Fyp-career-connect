@@ -2,30 +2,25 @@
 import { useState, useEffect } from 'react'
 import QuizHeader from '@/components/dashboad/quiz/QuizHeader'
 import QuestionCounter from '@/components/dashboad/quiz/QuestionCounter'
-import QuestionCard from '@/components/dashboad/quiz/QuestionCard'
-import OptionsList from '@/components/dashboad/quiz/OptionList'
+import LikertScale from '@/components/quiz/templates/LikertScale'
 import SurveyControls from '@/components/dashboad/survey/SurveyControls'
-import ProgressTracker from '@/components/dashboad/quiz/ProgressTracker'
 import QuizTopBar from '@/components/dashboad/quiz/QuizTopbar'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/context/AuthContext'
+import { logActivity, ActivityTypes } from '@/helpers/activityLogger'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function SurveyPage() {
-  const likertScale = [
-    "Strongly Disagree",
-    "Disagree",
-    "Neutral",
-    "Agree",
-    "Strongly Agree"
-  ]
-
+  const { user } = useAuth()
   const router = useRouter()
 
-  const questionsPerPage = 3
+  const questionsPerPage = 1 // Show one question at a time for better UX
   const [currentPage, setCurrentPage] = useState(0)
   const [questions, setQuestions] = useState([])
   const [answers, setAnswers] = useState({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [hasLoggedStart, setHasLoggedStart] = useState(false)
 
   useEffect(() => {
     const saved = localStorage.getItem('surveyResponses')
@@ -59,10 +54,23 @@ export default function SurveyPage() {
   const start = currentPage * questionsPerPage
   const end = start + questionsPerPage
   const currentQuestions = questions.slice(start, end)
+  const currentQuestion = currentQuestions[0] // Single question per page
   const allAnswered = total > 0 && Object.keys(answers).length === total
+  const progress = total > 0 ? ((Object.keys(answers).length / total) * 100) : 0
 
   function handleSelect(questionId, option) {
+    if (user && !hasLoggedStart) {
+      logActivity(user._id, ActivityTypes.SURVEY_STARTED)
+      setHasLoggedStart(true)
+    }
     setAnswers(prev => ({ ...prev, [questionId]: option }))
+    
+    // Auto-advance to next question after a short delay
+    setTimeout(() => {
+      if ((currentPage + 1) * questionsPerPage < total) {
+        setCurrentPage(prev => prev + 1)
+      }
+    }, 400)
   }
 
   function handleNext() {
@@ -105,6 +113,11 @@ export default function SurveyPage() {
         setError('Could not process results. Please try again later.')
         return
       }
+      
+      if (user) {
+        logActivity(user._id, ActivityTypes.SURVEY_COMPLETED)
+      }
+      
       localStorage.removeItem('surveyResponses')
       // Redirect or confirmation logic goes here
       router.push('/dashboard/recommendations')
@@ -115,46 +128,148 @@ export default function SurveyPage() {
     }
   }
 
-  if (loading) return <div className="text-center p-6">Loading...</div>
-  if (questions.length === 0) return <div className="text-center p-6">No questions found.</div>
+  if (loading) return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
+        <p className="text-gray-600 dark:text-gray-400">Loading survey...</p>
+      </div>
+    </div>
+  )
+  
+  if (questions.length === 0) return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+      <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl">
+        <p className="text-gray-600 dark:text-gray-400">No questions found.</p>
+      </div>
+    </div>
+  )
 
   return (
-    <div className="min-h-screen bg-muted/10 dark:bg-background p-4">
-      <div className="max-w-3xl mx-auto bg-white dark:bg-background-dark rounded-2xl shadow-xl p-6 space-y-6">
-        <QuizTopBar exitText='Survey' />
-        <QuizHeader
-          title="Interest Survey"
-          description="Tell us about your interests and preferences to help us recommend the best career paths for you."
-        />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Top Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <QuizTopBar exitText='Survey' />
+        </motion.div>
 
-        {currentQuestions.map((q) => (
-          <div key={q._id} className="mb-6">
-            <QuestionCard question={q} />
-            <OptionsList
-              options={q.options?.length ? q.options : likertScale}
-              selected={answers[q._id]}
-              onSelect={(option) => handleSelect(q._id, option)}
+        {/* Main Card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden mt-6"
+        >
+          {/* Header Section */}
+          <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 p-8 text-white">
+            <QuizHeader
+              title="Personality Survey"
+              description="Tell us about your personality traits and preferences to help us recommend the best career paths for you."
+            />
+            
+            {/* Progress Bar */}
+            <div className="mt-6">
+              <div className="flex justify-between text-sm mb-2">
+                <span className="font-medium">Progress</span>
+                <span className="font-medium">{Math.round(progress)}%</span>
+              </div>
+              <div className="w-full bg-white/30 rounded-full h-3 overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.5 }}
+                  className="h-full bg-white rounded-full shadow-lg"
+                />
+              </div>
+              <div className="mt-2 text-sm text-white/90">
+                Question {start + 1} of {total}
+              </div>
+            </div>
+          </div>
+
+          {/* Question Section */}
+          <div className="p-8 md:p-12">
+            <AnimatePresence mode="wait">
+              {currentQuestion && (
+                <motion.div
+                  key={currentQuestion._id}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-8"
+                >
+                  {/* Question Number Badge */}
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-white font-bold text-lg shadow-lg">
+                      {start + 1}
+                    </div>
+                    <div className="h-1 flex-1 bg-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-900 dark:to-purple-900 rounded-full" />
+                  </div>
+
+                  {/* Likert Scale Component */}
+                  <LikertScale
+                    question={currentQuestion}
+                    onAnswer={(option) => handleSelect(currentQuestion._id, option)}
+                  />
+
+                  {/* Answer Indicator */}
+                  {answers[currentQuestion._id] && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="text-center py-4"
+                    >
+                      <div className="inline-flex items-center gap-2 px-6 py-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full font-medium">
+                        <span className="text-xl">✓</span>
+                        Answer recorded
+                      </div>
+                    </motion.div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 text-sm text-center"
+              >
+                {error}
+              </motion.div>
+            )}
+          </div>
+
+          {/* Controls Section */}
+          <div className="border-t border-gray-200 dark:border-gray-700 p-6 bg-gray-50 dark:bg-gray-900/50">
+            <SurveyControls
+              onPrev={handlePrev}
+              onNext={handleNext}
+              onSubmit={handleSubmit}
+              disablePrev={currentPage === 0}
+              disableNext={!answers[currentQuestion?._id]}
+              isLast={end >= total}
             />
           </div>
-        ))}
+        </motion.div>
 
-        {error && (
-          <div className="text-red-500 text-sm text-center -mt-4">{error}</div>
+        {/* Completion Status */}
+        {allAnswered && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-6 p-6 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl shadow-xl text-white text-center"
+          >
+            <div className="text-4xl mb-2">🎉</div>
+            <h3 className="text-xl font-bold mb-1">All Questions Answered!</h3>
+            <p className="text-green-100">Click submit to get your personalized career recommendations</p>
+          </motion.div>
         )}
-
-        <SurveyControls
-          onPrev={handlePrev}
-          onNext={handleNext}
-          onSubmit={handleSubmit}
-          disablePrev={currentPage === 0}
-          disableNext={currentQuestions.some(q => !answers[q._id])}
-          isLast={end >= total}
-        />
-
-        <QuestionCounter current={start + 1} total={total} />
-
-      
-      
       </div>
     </div>
   )

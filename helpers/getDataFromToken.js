@@ -3,6 +3,7 @@ import { DbCon } from "@/lib/dbCon";
 import User from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
 import bcrytjs, { genSalt } from "bcryptjs"
+import jwt from "jsonwebtoken";
 export const getDataFromToken = (request) => {
   try {
     const token = request.cookies.get("token")?.value || "";

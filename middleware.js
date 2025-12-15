@@ -5,6 +5,11 @@ import { cookies } from "next/headers";
 export function middleware(request) {
   const path = request.nextUrl.pathname;
 
+  // Skip middleware for Next.js image optimization requests
+  if (path.startsWith('/_next/image')) {
+    return NextResponse.next();
+  }
+
   const publicPaths = [
     "/",
     "/login",
@@ -14,12 +19,18 @@ export function middleware(request) {
     "/about",
   ];
   const isPublicPath = publicPaths.includes(path);
+  const isHomePage = path === "/";
 
   const token = request.cookies.get("token")?.value || "";
 
   const isDashboardPath = path.startsWith("/dashboard");
 
-  // if logged in and hitting public → send to dashboard
+  // if logged in and hitting home page → send to dashboard
+  if (isHomePage && token) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+  
+  // if logged in and hitting other public paths → send to dashboard
   if (isPublicPath && token) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
@@ -37,6 +48,7 @@ export function middleware(request) {
 // See "Matching Paths" below to learn more
 export const config = {
   matcher: [
+    "/",
     "/login",
     "/signup",
     "/verifyemail",

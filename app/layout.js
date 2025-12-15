@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/footer";
 import { icons } from "lucide-react";
@@ -33,14 +34,14 @@ export default function RootLayout({ children }) {
   // const pathname = usePathname();
 
   return (
-    <html lang="en">
+    <html suppressHydrationWarning>
       <ThemeProvider>
-      <body className={`${geistSans.variable} ${geistMono.variable} bg-background-light dark:bg-background-dark antialiased`}>
-        
-        {children}
-        
-      </body>
-     </ThemeProvider>
+        <AuthProvider>
+          <body className={`${geistSans.variable} ${geistMono.variable} bg-background-light dark:bg-background-dark antialiased`}>
+            {children}
+          </body>
+        </AuthProvider>
+      </ThemeProvider>
     </html>
   );
 }

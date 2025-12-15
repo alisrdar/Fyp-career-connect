@@ -10,11 +10,21 @@ import { articleData } from "@/lib/data/educationArticles";
 import ResourceSection from "@/components/resources/ResourceSection";
 import { useRouter } from "next/navigation";
 import BackToTopButton from "@/components/ui/BacktoTheTop";
+import { useAuth } from "@/context/AuthContext";
+import { logActivity, ActivityTypes } from "@/helpers/activityLogger";
 
 
 export default function ResourcesPage() {
+  const { user } = useAuth();
   const router = useRouter();
   const [q, setQ] = useState("");
+  
+  useEffect(() => {
+    if (user) {
+      logActivity(user._id, ActivityTypes.RESOURCES_VISITED);
+    }
+  }, [user]);
+  
   function handleSearch(e) {
     e.preventDefault();
     if (q.trim() !== "") {

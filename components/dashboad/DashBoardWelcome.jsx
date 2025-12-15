@@ -7,7 +7,9 @@ import Coverbanner from "./profile/Coverbanner";
 import StepCard from "./StepCard";
 import ProgressItem from "./ProgressItem";
 import ResourceItem from "./ResourseItem";
-import { useUser } from "@/context/UserContext";  // custom hook
+// using AuthContext as central auth hook
+
+import { useAuth } from "@/context/AuthContext";
 import {
   FileChartColumn,
   FileVideo,
@@ -16,7 +18,7 @@ import {
 } from "lucide-react";
 
 export default function DashboardWelcome() {
-  const { user, loading, err } = useUser();
+  const { user, loading, err } = useAuth();
   const router = useRouter();
 
   if (loading) return <p>Loading profile…</p>;

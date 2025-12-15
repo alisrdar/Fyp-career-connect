@@ -4,7 +4,7 @@
 import Sidebar from "@/components/dashboad/SideBar";
 import MobileHeader from "@/components/dashboad/MobileHeader";
 import { DashboardProvider, useDashboard } from "@/context/DashboardContext";
-import { UserProvider } from "@/context/UserContext"
+// AuthProvider is already applied at app/layout.js
 
 function InnerLayout({ children }) {
   const { collapsed, setCollapsed, sidebarOpen, setSidebarOpen, handleLogout } = useDashboard();
@@ -29,9 +29,7 @@ function InnerLayout({ children }) {
 export default function DashboardLayout({ children }) {
   return (
     <DashboardProvider>
-      <UserProvider> 
-        <InnerLayout>{children}</InnerLayout>
-      </UserProvider>
+      <InnerLayout>{children}</InnerLayout>
     </DashboardProvider>
   );
 }

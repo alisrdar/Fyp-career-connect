@@ -8,7 +8,7 @@ import ThemeToggler from '../ui/ThemeToggler'
 import { useDarkMode } from '@/context/ThemeContext'
 import Link from 'next/link'
 import { LogOut } from 'lucide-react'
-import { useUser } from '@/context/UserContext'
+import { useAuth } from '@/context/AuthContext'
 import {
     HomeIcon,
     DocumentTextIcon,
@@ -64,7 +64,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, collapsed, setCol
     const { theme } = useDarkMode()
     const router = useRouter()
     const pathname = usePathname()
-    const {user, err, loading} = useUser()
+    const {user, err, loading} = useAuth()
 
     const closeMobile = () => setSidebarOpen(false)
     const toggleDesktop = () => setCollapsed(!collapsed)

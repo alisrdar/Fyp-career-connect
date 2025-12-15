@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { Plus, Settings, Share2, Mail, Edit2 } from "lucide-react";
 
 export default function ProfileHero({ user, onAvatarChange, title }) {
@@ -33,11 +32,10 @@ export default function ProfileHero({ user, onAvatarChange, title }) {
 
       {/* Avatar + edit */}
       <div className="relative -mt-12 ml-6 z-1 w-24 h-24">
-        <Image
+        <img
           src={avatarSrc}
           alt="Avatar"
-          fill
-          className="rounded-full object-cover border-4 dark:border-none border-white"
+          className="w-full h-full rounded-full object-cover border-4 dark:border-none border-white"
         />
         {onAvatarChange && (
           <label className="absolute bottom-0 right-0 bg-white dark:bg-surface p-1 rounded-full shadow cursor-pointer">

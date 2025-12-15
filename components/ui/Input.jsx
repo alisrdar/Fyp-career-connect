@@ -4,7 +4,7 @@ import React from "react";
 const Input = ({ label, type = "text", placeholder, className = "", ...props }) => {
   return (
     <div className="flex flex-col gap-2">
-      {label && <label className="text-sm font-medium text-foreground">{label}</label>}
+      {label && <label className="text-md font-medium text-foreground mb-1">{label}</label>}
       <input
         type={type}
         placeholder={placeholder}

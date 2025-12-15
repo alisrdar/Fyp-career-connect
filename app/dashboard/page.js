@@ -1,21 +1,10 @@
-import React from "react";
-import DashBoardWelcome from "@/components/dashboad/DashBoardWelcome";
+'use client';
 
+import React from "react";
+import PlayerHQ from "@/components/dashboad/PlayerHQ";
 
 const Home = () => {
-
-  return (
-    <div className="min-h-screen flex bg-gray-50 dark:bg-background-dark">
-      <main
-        className={`
-          flex-1 flex flex-col transition-all duration-300 
-        `}
-      >
-        {/* Actual content */}
-        <DashBoardWelcome />
-      </main>
-    </div>
-  );
+  return <PlayerHQ />;
 };
 
 export default Home;

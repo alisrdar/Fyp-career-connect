@@ -5,12 +5,12 @@ import ProfileHero from "@/components/dashboad/ProfileHero";
 import EditUserModal from "@/components/dashboad/EditUserModal";
 import ChangePasswordModal from "@/components/dashboad/profile/ChangePasswordModal";
 import Button from "@/components/ui/Button";
-import { useUser } from "@/context/UserContext";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isPwdModal, setIsPwdModal] = useState(false);
-  const { user, loading, err, setUser } = useUser();
+  const { user, loading, err, setUser } = useAuth();
 
   // avatar upload + update
   const handleAvatarChange = async file => {
@@ -41,6 +41,7 @@ export default function ProfilePage() {
 
   if (loading) return <p>Loading profile…</p>;
   if (err) return <p className="text-red-500">{err}</p>;
+  if (!user) return <p>No user data available. Please log in.</p>;
 
   return (
     <div className="flex bg-gray-50 dark:bg-background-dark min-h-screen">

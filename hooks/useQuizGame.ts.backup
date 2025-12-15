@@ -1,0 +1,204 @@
+import { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+import { Question, Recommendation, Stage, MascotState, Badge } from '@/app/quiz/types';import useMascotState from './useMascotState';
+// --- CONFIGURATION ---
+const STAGES: Record<number, Stage> = {
+  1: { name: "Warm Up", color: "bg-green-500", textColor: "text-green-500", icon: "🌱" },
+  2: { name: "Deep Dive", color: "bg-yellow-500", textColor: "text-yellow-500", icon: "🌊" },
+  3: { name: "Final Analysis", color: "bg-red-500", textColor: "text-red-500", icon: "🏁" }
+};
+
+// Demographic Limits (Can be adjusted or loaded from backend later)
+const MAX_QUESTIONS_MAP: Record<string, number> = {
+  "middle_school": 20,
+  "high_school": 25,
+  "adult": 30
+};
+
+export function useQuizGame() {
+  const router = useRouter();
+  const authContext = useAuth();
+  
+  if (!authContext) {
+    throw new Error('useQuizGame must be used within an AuthProvider');
+  }
+  
+  const { user, loading: userLoading } = authContext;
+  
+  // --- MASCOT STATE ENGINE ---
+  const mascot = useMascotState();
+  
+  // --- CORE STATE ---
+  const [question, setQuestion] = useState<Question | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isFinished, setIsFinished] = useState<boolean>(false);
+  const [results, setResults] = useState<Recommendation[] | null>(null);
+
+  // --- PROGRESS STATE ---
+  const [questionCount, setQuestionCount] = useState<number>(0);
+  const [previousStageId, setPreviousStageId] = useState<number>(1);
+  const maxQuestions = (user as any)?.demographic ? (MAX_QUESTIONS_MAP[(user as any).demographic as keyof typeof MAX_QUESTIONS_MAP] || 25) : 25;
+  const progress = Math.min((questionCount / maxQuestions) * 100, 100);
+
+  // --- GAMIFICATION STATE ---
+  const [streak, setStreak] = useState<number>(0);
+  const [xp, setXp] = useState<number>(0);
+  const [xpGained, setXpGained] = useState<number>(0); 
+  const [badge, setBadge] = useState<Badge | null>(null);
+
+  // Prevent double-fetching in React 18
+  const sessionStarted = useRef(false);
+
+  // --- 1. START SESSION WRAPPER ---
+  const startSession = async (): Promise<void> => {
+    if (!user || sessionStarted.current) return;
+    sessionStarted.current = true;
+    setLoading(true);
+
+    try {
+      await fetchNextQuestion();
+    } catch (err) {
+      console.error("Failed to start:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // --- 2. FETCH NEXT QUESTION ---
+  const fetchNextQuestion = async (): Promise<void> => {
+    try {
+      const res = await axios.post('/api/proxy/rag/next-question', { user_id: (user as any)?._id });
+      
+      if (res.status === 204) {
+        finishQuiz();
+      } else {
+        setQuestion(res.data);
+      }
+    } catch (err: any) {
+      if (err.response?.status === 204) finishQuiz();
+    }
+  };
+
+  // --- 3. SUBMIT ANSWER (THE GAME LOOP) ---
+  const submitAnswer = async (answerId: string): Promise<void> => {
+    if (!user) return;
+
+    setMascotState("thinking");
+    setQuip("Hmm...");
+    
+    // Trigger mascot thinking state
+    mascot.onAnswerStart();
+    
+    // Determine if it's a survey question (no right/wrong answer)
+    const isSurvey = question?.type === 'likert_5' || question?.type === 'visual_swipe';
+    let newStreak = streak;
+    let earnedXp = 10;
+    let result: 'correct' | 'wrong' | 'neutral' = 'neutral';
+
+    if (!isSurvey) {
+       // For knowledge questions, assume correct (or get from backend)
+       newStreak += 1;
+       earnedXp += (newStreak * 2); 
+       result = 'correct';
+    }
+
+    // Update local state
+    setStreak(newStreak);
+    setXp(prev => prev + earnedXp);
+    setXpGained(earnedXp);
+    setQuestionCount(prev => prev + 1);
+
+    // Check for stage crossing
+    const currentStageId = Math.ceil((progress / 100) * 3) || 1;
+    const newProgress = Math.min(((questionCount + 1) / maxQuestions) * 100, 100);
+    const newStageId = Math.ceil((newProgress / 100) * 3) || 1;
+    const stageCrossed = newStageId > previousStageId;
+    
+    if (stageCrossed) {
+      setPreviousStageId(newStageId);
+    }
+
+    // Check badges
+    const badgeEarned = checkBadges(newStreak);
+
+    try {
+      await axios.post('/api/proxy/user/save-response', {
+        user_id: (user as any)._id,
+        question_id: question!.id,
+        response_id: answerId
+      });
+
+      // Trigger mascot result state
+      mascot.onAnswerResult(result, stageCrossed);
+      
+      // Trigger badge celebration if earned
+      if (badgeEarned) {
+        mascot.onBadgeEarned();
+      }
+
+      if (questionCount + 1 >= maxQuestions) {
+    mascot.onStageComplete();
+    
+    try {
+      const res = await axios.post('/api/proxy/recommend/results', { 
+        user_id: (user as any)?._id,
+        personality: {} 
+      });
+      
+      setResults(res.data.recommendations);
+      setIsFinished(true);
+    } catch (err) {
+      console.error("Results Error", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // --- HELPER LOGIC ---
+  const checkBadges = (currentStreak: number): boolean => {
+    let badgeEarned = false;
+    if (currentStreak === 3 && streak < 3) {
+        setBadge({ name: "On Fire!", icon: "🔥" });
+        setTimeout(() => setBadge(null), 3000);
+        badgeEarned = true;
+    }
+    if (currentStreak === 5 && streak < 5) {
+        setBadge({ name: "Unstoppable!", icon: "🚀" });
+        setTimeout(() => setBadge(null), 3000);
+        badgeEarned = true;
+    }
+    return badgeEarned;
+  };
+
+  // Calculate Stage based on progress
+  const currentStageId = Math.ceil((progress / 100) * 3) || 1;
+  const stage = STAGES[Math.min(currentStageId, 3)];
+
+  return { 
+    question, 
+    results,
+    loading: (loading || userLoading), 
+    isFinished,
+    progress,
+    questionCount,
+    maxQuestions,
+    stage,
+    streak,
+    xp,
+    xpGained,
+    badge,
+    mascotState: mascot.state,
+    startSession,
+    submitAnswer 
+  };
+}
+
+// --- UTILS ---
+function getStreakQuip(count: number): string {
+    if (count >= 5) return "UNSTOPPABLE! 🚀";
+    if (count >= 3) return "You're on fire! 🔥";
+    const phrases = ["Great job!", "Nice!", "Keep it up!", "Spot on!"];
+    return phrases[Math.floor(Math.random() * phrases.length)];
+}

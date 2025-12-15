@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from 'react'
 import Card from "@/components/ui/Card"
 import Button from '@/components/ui/Button'
 import BackToTopButton from '@/components/ui/BacktoTheTop'
+import Link from 'next/link'
+import { getAllCareers } from '@/lib/data/careers'
 import {
   RadarChart,
   PolarGrid,
@@ -24,6 +26,7 @@ export default function CareerRecommendations() {
   const [strongestTrait, setStrongestTrait] = useState(null)
   const [strongestScore, setStrongestScore] = useState(null)
   const reportRef = useRef(null)
+  const [showAIRecommendations, setShowAIRecommendations] = useState(false)
 
   // Fetch stored personality report
   useEffect(() => {
@@ -115,37 +118,15 @@ export default function CareerRecommendations() {
     `
   };
 
-  const topMatches = [
-    {
-      imageSrc:
-        'https://www.shutterstock.com/image-photo/panorama-shot-frontend-developer-team-260nw-2294268357.jpg',
-      tag: '98% Match',
-      title: 'UX Designer',
-      description:
-        'Your creative problem-solving and empathy make you ideal for designing user experiences that solve real problems.',
-      href: 'https://careerfoundry.com/en/blog/ux-design/am-i-a-good-fit-for-a-career-in-ux-design/',
-      linkText: 'Learn More',
-    },
-    {
-      imageSrc: '/images/data-science.jpg.webp',
-      tag: '95% Match',
-      title: 'Data Scientist',
-      description:
-        'Your analytical thinking and pattern recognition skills are perfect for extracting insights from complex data.',
-      href: 'https://www.coursera.org/articles/what-is-a-data-scientist',
-      linkText: 'Learn More',
-    },
-    {
-      imageSrc:
-        'https://media.istockphoto.com/id/1319031310/photo/doctor-writing-a-medical-prescription.jpg?s=612x612&w=0&k=20&c=DWZGM8lBb5Bun7cbxhKT1ruVxRC_itvFzA9jxgoA0N8=',
-      tag: '86% Match',
-      title: 'Doctor',
-      description:
-        'Your strong empathy and problem-solving skills make you well-suited for a career in medicine, helping patients every day.',
-      href: 'https://www.aafp.org/students-residents/medical-students/considering-medical-school/is-career-in-medicine-for-you.html',
-      linkText: 'Learn More',
-    },
-  ]
+  // Get top career matches from our career data
+  const topMatches = getAllCareers().map(career => ({
+    imageSrc: career.imageSrc,
+    tag: `${career.matchScore}% Match`,
+    title: career.title,
+    description: career.tagline,
+    slug: career.id, // For internal routing
+    linkText: 'View Career Path',
+  }))
 
   return (
     <div className="flex min-h-screen dark:bg-background-dark bg-gray-50">
@@ -160,6 +141,34 @@ export default function CareerRecommendations() {
               Based on your quiz, here's your personality breakdown and top career matches.
             </p>
           </header>
+
+          {/* AI Recommendations Banner */}
+          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-600 dark:to-indigo-700 rounded-2xl shadow-2xl p-6 sm:p-8">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-4xl">
+                  🤖
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-white mb-1">
+                    AI-Powered Career Matches
+                  </h2>
+                  <p className="text-white/90 text-sm">
+                    Get personalized career recommendations based on our advanced AI analysis
+                  </p>
+                </div>
+              </div>
+              <Link href="/results">
+                <Button
+                  className="w-full sm:w-auto bg-white text-blue-600 hover:bg-gray-100"
+                  variant="primary"
+                  type="button"
+                  size="lg"
+                  btnText="View AI Results"
+                />
+              </Link>
+            </div>
+          </div>
 
           {/* Back to the top */}
           <BackToTopButton />
@@ -254,7 +263,11 @@ export default function CareerRecommendations() {
               Top Matches
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-              {topMatches.map((match, i) => <Card key={i} {...match} />)}
+              {topMatches.map((match, i) => (
+                <Link key={i} href={`/careers/${match.slug}`}>
+                  <Card {...match} />
+                </Link>
+              ))}
             </div>
           </section>
 
@@ -272,10 +285,10 @@ export default function CareerRecommendations() {
               ].map(({ icon, title, desc }) => (
                 <li
                   key={title}
-                  className="flex items-start space-x-3 sm:space-x-4 p-4 sm:p-5 bg-white dark:bg-surface rounded-2xl shadow-md hover:shadow-xl transition-shadow"
+                  className="flex items-start space-x-3 sm:space-x-4 p-4 sm:p-5 bg-white dark:bg-surface rounded-xl shadow-md hover:shadow-lg transition-all"
                 >
                   <div className="flex-shrink-0">
-                    <span className="inline-flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-accent dark:text-accent rounded-full text-lg sm:text-xl">
+                    <span className="text-3xl sm:text-4xl">
                       {icon}
                     </span>
                   </div>

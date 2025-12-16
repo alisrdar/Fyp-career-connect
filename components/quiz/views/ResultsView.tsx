@@ -23,7 +23,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({ results, xp, streak }) => {
         {/* Success Message */}
         <div className="space-y-4">
           <h1 className="text-5xl font-bold text-gray-800 dark:text-gray-100">
-            Amazing Work! 🎉
+            Amazing Work!
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300">
             You've completed the Career Discovery Quiz!
@@ -86,7 +86,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({ results, xp, streak }) => {
                      hover:from-green-600 hover:to-emerald-600 text-white text-lg font-bold 
                      rounded-xl shadow-lg transition-all duration-300 hover:scale-105"
           >
-            View AI Results 🤖
+            View AI Results
           </button>
           <button
             onClick={() => router.push('/dashboard/recommendations')}
@@ -94,7 +94,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({ results, xp, streak }) => {
                      hover:from-blue-600 hover:to-purple-600 text-white text-lg font-bold 
                      rounded-xl shadow-lg transition-all duration-300 hover:scale-105"
           >
-            View Personality Report 📊
+            View Personality Report
           </button>
           <button
             onClick={() => router.push('/dashboard')}

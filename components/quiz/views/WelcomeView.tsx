@@ -68,7 +68,7 @@ const WelcomeView: React.FC<WelcomeViewProps> = ({ onStart, loading }) => {
               Loading...
             </span>
           ) : (
-            "Let's Get Started! 🚀"
+            "Let's Get Started!"
           )}
         </button>
 

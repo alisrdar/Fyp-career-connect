@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/lib/dbCon';
+import { DbCon } from '@/lib/dbCon';
 import { getDataFromToken } from '@/helpers/getDataFromToken';
 import User from '@/models/User';
 
 export async function POST(request) {
   try {
-    await connectDB();
+    await DbCon();
 
     // Get user from token
     const userId = await getDataFromToken(request);
@@ -69,7 +69,7 @@ export async function POST(request) {
 // GET endpoint to retrieve saved recommendations
 export async function GET(request) {
   try {
-    await connectDB();
+    await DbCon();
 
     // Get user from token
     const userId = await getDataFromToken(request);

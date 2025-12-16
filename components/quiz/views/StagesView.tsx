@@ -80,7 +80,7 @@ const StagesView: React.FC<StagesViewProps> = ({
           
           <div className="text-center mb-6 sm:mb-8">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 dark:text-gray-100 mb-2">
-              Your Journey 🚀
+              Your Journey
             </h1>
             <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300">
               Complete each stage to unlock the next.

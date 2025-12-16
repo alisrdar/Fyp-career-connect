@@ -138,7 +138,7 @@ const DemographicView: React.FC<DemographicViewProps> = ({ onSelectDemographic, 
         {/* Info Footer */}
         <div className="mt-6 text-center">
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            💡 This helps us customize the difficulty and number of questions for you
+            This helps us customize the difficulty and number of questions for you
           </p>
         </div>
       </div>

@@ -28,6 +28,17 @@ export default function PlayerHQ() {
   const [streak, setStreak] = useState(0);
   const [recentActivities, setRecentActivities] = useState([]);
   const [showGuideModal, setShowGuideModal] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Load activities
   useEffect(() => {
@@ -135,32 +146,62 @@ export default function PlayerHQ() {
   }
 
   return (
-    <div className="min-h-screen bg-background-light dark:bg-background-dark p-4 md:p-6 lg:p-8">
+    <div className="min-h-screen bg-background-light dark:bg-background-dark p-3 sm:p-4 md:p-6 lg:p-8">
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-auto"
+        className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 auto-rows-auto"
       >
-        {/* HERO WELCOME CARD - Spans 2 cols */}
+        {/* HERO WELCOME CARD - Mobile vs Desktop Conditional Rendering */}
         <motion.div
           variants={itemVariants}
-          whileHover={{ scale: 1.02, y: -5 }}
+          whileHover={{ scale: isMobile ? 1 : 1.02, y: isMobile ? 0 : -5 }}
           whileTap={{ scale: 0.98 }}
-          className="md:col-span-2 bg-white dark:bg-surface rounded-2xl shadow-xl dark:shadow-black/20 p-6 md:p-8 cursor-pointer overflow-hidden relative border border-transparent dark:border-border"
+          className="md:col-span-2 bg-white dark:bg-surface rounded-xl sm:rounded-2xl shadow-xl dark:shadow-black/20 p-5 sm:p-6 md:p-8 cursor-pointer overflow-hidden relative border border-transparent dark:border-border"
         >
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <motion.h1 
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="text-2xl md:text-3xl font-bold text-foreground-light dark:text-foreground-dark mb-2"
-                style={{ fontFamily: 'Poppins, sans-serif' }}
-              >
-                Welcome back, {user?.name?.split(' ')[0] || 'Explorer'}!
-              </motion.h1>
-              <p className="text-gray-600 dark:text-gray-400 mb-4" style={{ fontFamily: 'Inter, sans-serif' }}>
+          {isMobile ? (
+            // MOBILE LAYOUT
+            <div className="space-y-4">
+              {/* Header with Avatar */}
+              <div className="flex items-center gap-3">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
+                >
+                  {user?.avatarUrl ? (
+                    <div className="w-16 h-16 rounded-full overflow-hidden ring-4 ring-primary/20 shadow-lg">
+                      <img 
+                        src={user.avatarUrl} 
+                        alt={user?.name || 'User'} 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-2xl ring-4 ring-primary/20 shadow-lg">
+                      {user?.name?.charAt(0).toUpperCase() || '🤖'}
+                    </div>
+                  )}
+                </motion.div>
+                <div className="flex-1">
+                  <motion.h1 
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-lg font-bold text-foreground-light dark:text-foreground-dark mb-0.5"
+                    style={{ fontFamily: 'Poppins, sans-serif' }}
+                  >
+                    Welcome back,
+                  </motion.h1>
+                  <p className="text-xl font-extrabold text-primary dark:text-secondary" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                    {user?.name?.split(' ')[0] || 'Explorer'}!
+                  </p>
+                </div>
+              </div>
+
+              {/* Description */}
+              <p className="text-sm text-gray-600 dark:text-gray-400" style={{ fontFamily: 'Inter, sans-serif' }}>
                 Ready to level up your career journey?
               </p>
               
@@ -185,72 +226,140 @@ export default function PlayerHQ() {
                   >
                     <Flame className="w-5 h-5 text-orange-500" />
                   </motion.div>
-                  <span className="font-semibold text-orange-600 dark:text-orange-400" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                  <span className="text-base font-semibold text-orange-600 dark:text-orange-400" style={{ fontFamily: 'Poppins, sans-serif' }}>
                     {streak} Day Streak!
                   </span>
                 </motion.div>
               )}
             </div>
+          ) : (
+            // DESKTOP LAYOUT
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <motion.h1 
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-2xl md:text-3xl font-bold text-foreground-light dark:text-foreground-dark mb-2 truncate"
+                  style={{ fontFamily: 'Poppins, sans-serif' }}
+                >
+                  Welcome back, {user?.name?.split(' ')[0] || 'Explorer'}!
+                </motion.h1>
+                <p className="text-base text-gray-600 dark:text-gray-400 mb-4" style={{ fontFamily: 'Inter, sans-serif' }}>
+                  Ready to level up your career journey?
+                </p>
+                
+                {/* Daily Streak */}
+                {streak > 0 && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: 'spring', delay: 0.5 }}
+                    className="inline-flex items-center gap-2 bg-orange-100 dark:bg-orange-900/30 px-4 py-2 rounded-full"
+                  >
+                    <motion.div
+                      animate={{ 
+                        scale: [1, 1.2, 1],
+                        rotate: [0, 5, -5, 0]
+                      }}
+                      transition={{ 
+                        duration: 2,
+                        repeat: Infinity,
+                        repeatType: 'reverse'
+                      }}
+                    >
+                      <Flame className="w-5 h-5 text-orange-500" />
+                    </motion.div>
+                    <span className="font-semibold text-orange-600 dark:text-orange-400" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                      {streak} Day Streak!
+                    </span>
+                  </motion.div>
+                )}
+              </div>
 
-            {/* User Avatar */}
-            <motion.div
-              initial={{ rotate: -10, scale: 0.8 }}
-              animate={{ rotate: 0, scale: 1 }}
-              transition={{ type: 'spring', stiffness: 200, delay: 0.4 }}
-              className="hidden md:block"
-            >
-              {user?.avatarUrl ? (
-                <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-primary/20">
-                  <img 
-                    src={user.avatarUrl} 
-                    alt={user?.name || 'User'} 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="w-24 h-24 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-4xl ring-4 ring-primary/20">
-                  {user?.name?.charAt(0).toUpperCase() || '🤖'}
-                </div>
-              )}
-            </motion.div>
-          </div>
+              {/* User Avatar */}
+              <motion.div
+                initial={{ rotate: -10, scale: 0.8 }}
+                animate={{ rotate: 0, scale: 1 }}
+                transition={{ type: 'spring', stiffness: 200, delay: 0.4 }}
+              >
+                {user?.avatarUrl ? (
+                  <div className="w-24 h-24 rounded-full overflow-hidden ring-4 ring-primary/20">
+                    <img 
+                      src={user.avatarUrl} 
+                      alt={user?.name || 'User'} 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-24 h-24 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-4xl ring-4 ring-primary/20">
+                    {user?.name?.charAt(0).toUpperCase() || '🤖'}
+                  </div>
+                )}
+              </motion.div>
+            </div>
+          )}
         </motion.div>
 
-        {/* SURVEY CARD */}
+        {/* SURVEY CARD - Conditional Mobile/Desktop */}
         <motion.div
           variants={itemVariants}
-          whileHover={{ scale: 1.02, y: -5 }}
+          whileHover={{ scale: isMobile ? 1 : 1.02, y: isMobile ? 0 : -5 }}
           whileTap={{ scale: 0.98 }}
-          className="md:col-span-2 bg-white dark:bg-surface rounded-2xl shadow-xl dark:shadow-black/20 p-6 cursor-pointer border border-transparent dark:border-border overflow-hidden relative"
+          className="md:col-span-2 bg-white dark:bg-surface rounded-xl sm:rounded-2xl shadow-xl dark:shadow-black/20 p-5 sm:p-6 cursor-pointer border border-transparent dark:border-border overflow-hidden relative"
           onClick={() => router.push('/survey')}
         >
-          <div className="flex items-center gap-4">
-            <div className="w-20 h-20 bg-accent dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
-              <FileText className="w-10 h-10 text-primary dark:text-secondary" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-bold text-primary dark:text-secondary px-2 py-1 bg-primary/10 dark:bg-primary/20 rounded-full">
+          {isMobile ? (
+            // MOBILE COMPACT LAYOUT
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-primary dark:text-secondary px-3 py-1 bg-primary/10 dark:bg-primary/20 rounded-full">
                   STEP 2
                 </span>
+                <div className="w-12 h-12 bg-accent dark:bg-primary/20 rounded-xl flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-primary dark:text-secondary" />
+                </div>
               </div>
-              <h3 className="text-lg font-bold text-foreground-light dark:text-foreground-dark mb-1" style={{ fontFamily: 'Poppins, sans-serif' }}>
+              <h3 className="text-base font-bold text-foreground-light dark:text-foreground-dark" style={{ fontFamily: 'Poppins, sans-serif' }}>
                 Career Personality Survey
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400" style={{ fontFamily: 'Inter, sans-serif' }}>
-                Complete this survey to help us understand your personality traits and preferences.
+              <p className="text-xs text-gray-600 dark:text-gray-400" style={{ fontFamily: 'Inter, sans-serif' }}>
+                Complete this survey to help us understand your personality.
               </p>
+              <div className="flex items-center justify-end">
+                <ArrowRight className="w-5 h-5 text-primary dark:text-secondary" />
+              </div>
             </div>
-            <ArrowRight className="w-6 h-6 text-primary dark:text-secondary flex-shrink-0" />
-          </div>
+          ) : (
+            // DESKTOP LAYOUT
+            <div className="flex items-center gap-4">
+              <div className="w-20 h-20 bg-accent dark:bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <FileText className="w-10 h-10 text-primary dark:text-secondary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-bold text-primary dark:text-secondary px-2 py-1 bg-primary/10 dark:bg-primary/20 rounded-full">
+                    STEP 2
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold text-foreground-light dark:text-foreground-dark mb-1" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                  Career Personality Survey
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400" style={{ fontFamily: 'Inter, sans-serif' }}>
+                  Complete this survey to help us understand your personality traits and preferences.
+                </p>
+              </div>
+              <ArrowRight className="w-6 h-6 text-primary dark:text-secondary flex-shrink-0" />
+            </div>
+          )}
         </motion.div>
 
         {/* NEXT QUEST CARD - Spans 2 cols */}
         <motion.div
           variants={itemVariants}
-          whileHover={{ scale: 1.02, y: -5 }}
+          whileHover={{ scale: isMobile ? 1 : 1.02, y: isMobile ? 0 : -5 }}
           whileTap={{ scale: 0.98 }}
-          className="md:col-span-2 bg-gradient-to-br from-primary to-secondary rounded-2xl shadow-xl dark:shadow-black/30 p-6 md:p-8 cursor-pointer relative overflow-hidden"
+          className="md:col-span-2 bg-gradient-to-br from-primary to-secondary rounded-xl sm:rounded-2xl shadow-xl dark:shadow-black/30 p-6 sm:p-6 md:p-8 cursor-pointer relative overflow-hidden"
           onClick={() => router.push('/quiz')}
         >
           {/* Animated shimmer background */}
@@ -271,25 +380,25 @@ export default function PlayerHQ() {
           />
 
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl md:text-2xl font-bold text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>
                 Next Quest
               </h2>
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
               >
-                <Star className="w-6 h-6 text-white fill-white" />
+                <Star className="w-5 h-5 sm:w-6 sm:h-6 text-white fill-white" />
               </motion.div>
             </div>
 
-            <p className="text-white/90 text-lg mb-4 font-semibold">
+            <p className="text-white/90 text-base sm:text-lg mb-3 sm:mb-4 font-semibold">
               Continue: {stageName}
             </p>
 
             {/* Progress Bar */}
-            <div className="mb-6">
-              <div className="w-full h-3 bg-white/30 rounded-full overflow-hidden">
+            <div className="mb-4 sm:mb-6">
+              <div className="w-full h-2.5 sm:h-3 bg-white/30 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${stageProgress}%` }}
@@ -297,7 +406,7 @@ export default function PlayerHQ() {
                   className="h-full bg-white rounded-full shadow-lg"
                 />
               </div>
-              <p className="text-white/80 text-sm mt-2">
+              <p className="text-white/80 text-xs sm:text-sm mt-1.5 sm:mt-2">
                 {Math.round(stageProgress)}% Complete
               </p>
             </div>
@@ -323,12 +432,21 @@ export default function PlayerHQ() {
           variants={itemVariants}
           whileHover={{ y: -5, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}
           whileTap={{ scale: 0.98 }}
-          className="bg-white dark:bg-surface rounded-2xl shadow-xl dark:shadow-black/20 p-6 cursor-pointer border border-transparent dark:border-border"
+          className="bg-white dark:bg-surface rounded-xl sm:rounded-2xl shadow-xl dark:shadow-black/20 p-4 sm:p-6 cursor-pointer border border-transparent dark:border-border"
         >
           <div className="flex flex-col items-center">
-            <div className="relative w-24 h-24 mb-3">
+            <div className="relative w-20 h-20 sm:w-24 sm:h-24 mb-2 sm:mb-3">
               {/* SVG Circular Progress */}
-              <svg className="transform -rotate-90 w-24 h-24">
+              <svg className="transform -rotate-90 w-20 h-20 sm:w-24 sm:h-24">
+                <circle
+                  cx="40"
+                  cy="40"
+                  r="34"
+                  stroke="currentColor"
+                  strokeWidth="6"
+                  fill="transparent"
+                  className="text-gray-200 dark:text-muted sm:hidden"
+                />
                 <circle
                   cx="48"
                   cy="48"
@@ -336,7 +454,21 @@ export default function PlayerHQ() {
                   stroke="currentColor"
                   strokeWidth="8"
                   fill="transparent"
-                  className="text-gray-200 dark:text-muted"
+                  className="text-gray-200 dark:text-muted hidden sm:block"
+                />
+                <motion.circle
+                  cx="40"
+                  cy="40"
+                  r="34"
+                  stroke="url(#gradient)"
+                  strokeWidth="6"
+                  fill="transparent"
+                  strokeDasharray={`${2 * Math.PI * 34}`}
+                  initial={{ strokeDashoffset: 2 * Math.PI * 34 }}
+                  animate={{ strokeDashoffset: 2 * Math.PI * 34 * (1 - assessmentScore / 100) }}
+                  transition={{ duration: 1.5, ease: 'easeOut', delay: 0.5 }}
+                  strokeLinecap="round"
+                  className="sm:hidden"
                 />
                 <motion.circle
                   cx="48"
@@ -350,6 +482,7 @@ export default function PlayerHQ() {
                   animate={{ strokeDashoffset: 2 * Math.PI * 40 * (1 - assessmentScore / 100) }}
                   transition={{ duration: 1.5, ease: 'easeOut', delay: 0.5 }}
                   strokeLinecap="round"
+                  className="hidden sm:block"
                 />
                 <defs>
                   <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -359,12 +492,12 @@ export default function PlayerHQ() {
                 </defs>
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-2xl font-bold text-foreground-light dark:text-foreground-dark" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                <span className="text-xl sm:text-2xl font-bold text-foreground-light dark:text-foreground-dark" style={{ fontFamily: 'Poppins, sans-serif' }}>
                   {Math.round(assessmentScore)}%
                 </span>
               </div>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 font-semibold" style={{ fontFamily: 'Inter, sans-serif' }}>
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-semibold text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
               Assessment Score
             </p>
           </div>
@@ -375,30 +508,30 @@ export default function PlayerHQ() {
           variants={itemVariants}
           whileHover={{ y: -5, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}
           whileTap={{ scale: 0.98 }}
-          className="bg-white dark:bg-surface rounded-2xl shadow-xl dark:shadow-black/20 p-6 cursor-pointer border border-transparent dark:border-border"
+          className="bg-white dark:bg-surface rounded-xl sm:rounded-2xl shadow-xl dark:shadow-black/20 p-4 sm:p-6 cursor-pointer border border-transparent dark:border-border"
         >
           <div className="flex flex-col items-center">
-            <div className="flex gap-3 mb-3">
+            <div className="flex gap-2 sm:gap-3 mb-2 sm:mb-3">
               <motion.div
                 whileHover={{ scale: 1.2, rotate: 10 }}
-                className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center"
+                className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg sm:rounded-xl flex items-center justify-center"
               >
-                <Trophy className="w-6 h-6 text-white" />
+                <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.2, rotate: -10 }}
-                className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center"
+                className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-primary to-secondary rounded-lg sm:rounded-xl flex items-center justify-center"
               >
-                <Star className="w-6 h-6 text-white" />
+                <Star className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.2, rotate: 10 }}
-                className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center"
+                className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg sm:rounded-xl flex items-center justify-center"
               >
-                <Award className="w-6 h-6 text-white" />
+                <Award className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </motion.div>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 font-semibold" style={{ fontFamily: 'Inter, sans-serif' }}>
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-semibold text-center" style={{ fontFamily: 'Inter, sans-serif' }}>
               Badges Earned
             </p>
           </div>
@@ -409,17 +542,17 @@ export default function PlayerHQ() {
           variants={itemVariants}
           whileHover={{ y: -5, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}
           whileTap={{ scale: 0.98 }}
-          className="bg-gradient-to-br from-accent to-primary/40 dark:from-primary/20 dark:to-secondary/20 rounded-2xl shadow-xl dark:shadow-black/20 p-6 cursor-pointer border border-transparent dark:border-border"
+          className="bg-gradient-to-br from-accent to-primary/40 dark:from-primary/20 dark:to-secondary/20 rounded-xl sm:rounded-2xl shadow-xl dark:shadow-black/20 p-4 sm:p-6 cursor-pointer border border-transparent dark:border-border"
           onClick={() => router.push('/resources')}
         >
           <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 bg-white dark:bg-surface rounded-2xl flex items-center justify-center mb-3 shadow-lg">
-              <BookOpen className="w-8 h-8 text-primary dark:text-secondary" />
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white dark:bg-surface rounded-xl sm:rounded-2xl flex items-center justify-center mb-2 sm:mb-3 shadow-lg">
+              <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-primary dark:text-secondary" />
             </div>
-            <p className="text-sm font-bold text-foreground-light dark:text-foreground-dark mb-1" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            <p className="text-xs sm:text-sm font-bold text-foreground-light dark:text-foreground-dark mb-0.5 sm:mb-1" style={{ fontFamily: 'Poppins, sans-serif' }}>
               Career Resources
             </p>
-            <p className="text-xs text-gray-600 dark:text-gray-400" style={{ fontFamily: 'Inter, sans-serif' }}>
+            <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400" style={{ fontFamily: 'Inter, sans-serif' }}>
               Articles, Videos & More
             </p>
           </div>
@@ -430,17 +563,17 @@ export default function PlayerHQ() {
           variants={itemVariants}
           whileHover={{ y: -5, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}
           whileTap={{ scale: 0.98 }}
-          className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 dark:from-purple-600/20 dark:to-pink-600/20 rounded-2xl shadow-xl dark:shadow-black/20 p-6 cursor-pointer border border-purple-200 dark:border-purple-800/30"
+          className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 dark:from-purple-600/20 dark:to-pink-600/20 rounded-xl sm:rounded-2xl shadow-xl dark:shadow-black/20 p-4 sm:p-6 cursor-pointer border border-purple-200 dark:border-purple-800/30"
           onClick={() => setShowGuideModal(true)}
         >
           <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-3 shadow-lg">
-              <Map className="w-8 h-8 text-white" />
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl sm:rounded-2xl flex items-center justify-center mb-2 sm:mb-3 shadow-lg">
+              <Map className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
             </div>
-            <p className="text-sm font-bold text-foreground-light dark:text-foreground-dark mb-1" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            <p className="text-xs sm:text-sm font-bold text-foreground-light dark:text-foreground-dark mb-0.5 sm:mb-1" style={{ fontFamily: 'Poppins, sans-serif' }}>
               Activity Guide
             </p>
-            <p className="text-xs text-purple-600 dark:text-purple-400" style={{ fontFamily: 'Inter, sans-serif' }}>
+            <p className="text-[10px] sm:text-xs text-purple-600 dark:text-purple-400" style={{ fontFamily: 'Inter, sans-serif' }}>
               See What's Tracked
             </p>
           </div>
@@ -449,9 +582,9 @@ export default function PlayerHQ() {
         {/* RECENT ACTIVITY - Full width on mobile, 2 cols on larger */}
         <motion.div
           variants={itemVariants}
-          className="md:col-span-3 lg:col-span-2 bg-white dark:bg-surface rounded-2xl shadow-xl dark:shadow-black/20 p-6 border border-transparent dark:border-border"
+          className="md:col-span-3 lg:col-span-2 bg-white dark:bg-surface rounded-xl sm:rounded-2xl shadow-xl dark:shadow-black/20 p-4 sm:p-6 border border-transparent dark:border-border"
         >
-          <h3 className="text-lg font-bold text-foreground-light dark:text-foreground-dark mb-4" style={{ fontFamily: 'Poppins, sans-serif' }}>
+          <h3 className="text-base sm:text-lg font-bold text-foreground-light dark:text-foreground-dark mb-3 sm:mb-4" style={{ fontFamily: 'Poppins, sans-serif' }}>
             Recent Activity
           </h3>
           {recentActivities.length > 0 ? (
@@ -494,18 +627,18 @@ export default function PlayerHQ() {
         <motion.div
           variants={itemVariants}
           whileHover={{ y: -5, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}
-          className="md:col-span-3 lg:col-span-2 bg-gradient-to-br from-primary via-darkblue to-secondary rounded-2xl shadow-xl dark:shadow-black/30 p-6"
+          className="md:col-span-3 lg:col-span-2 bg-gradient-to-br from-primary via-darkblue to-secondary rounded-xl sm:rounded-2xl shadow-xl dark:shadow-black/30 p-5 sm:p-6"
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white/80 text-sm mb-1" style={{ fontFamily: 'Inter, sans-serif' }}>
+              <p className="text-white/80 text-xs sm:text-sm mb-1" style={{ fontFamily: 'Inter, sans-serif' }}>
                 Total Experience
               </p>
               <motion.p
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', delay: 0.7 }}
-                className="text-4xl font-bold text-white"
+                className="text-3xl sm:text-4xl font-bold text-white"
                 style={{ fontFamily: 'Poppins, sans-serif' }}
               >
                 {quizProgress?.xp || 0} XP
@@ -521,7 +654,7 @@ export default function PlayerHQ() {
                 repeat: Infinity,
                 repeatType: 'reverse'
               }}
-              className="text-6xl"
+              className="text-5xl sm:text-6xl"
             >
               ⚡
             </motion.div>

@@ -6,6 +6,45 @@ import { Question, Recommendation, Stage, Badge } from '@/app/quiz/types';
 import useMascotState from './useMascotState';
 import { log } from 'console';
 
+// --- WORD REPLACEMENT DICTIONARY ---
+const WORD_REPLACEMENTS: Record<string, string> = {
+  'whodunnit': 'murder mystery',
+  'parlance': 'language',
+  'ameliorate': 'improve',
+  'obfuscate': 'confuse',
+  'cognizant': 'aware',
+  'ubiquitous': 'everywhere',
+  'ephemeral': 'temporary',
+  'paradigm': 'model',
+  'conundrum': 'puzzle',
+  'esoteric': 'specialized',
+  'quintessential': 'typical',
+  'dichotomy': 'division',
+  'juxtaposition': 'comparison',
+  'serendipity': 'luck',
+  'cacophony': 'noise',
+};
+
+// Helper: Replace difficult words in text
+function simplifyText(text: string): string {
+  let simplified = text;
+  for (const [difficult, simple] of Object.entries(WORD_REPLACEMENTS)) {
+    const regex = new RegExp(`\\b${difficult}\\b`, 'gi');
+    simplified = simplified.replace(regex, simple);
+  }
+  return simplified;
+}
+
+// Helper: Shuffle array (Fisher-Yates)
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 // --- CONFIGURATION ---
 const STAGES: Record<number, Stage> = {
   1: { name: "Warm Up", color: "bg-green-500", textColor: "text-green-500", icon: "🌱" },
@@ -232,7 +271,26 @@ export function useQuizGame() {
       if (res.status === 204) {
         finishQuiz();
       } else {
-        setQuestion(res.data);
+        let processedQuestion = res.data;
+        
+        // Apply word simplification to question text and options
+        if (processedQuestion) {
+          processedQuestion.text = simplifyText(processedQuestion.text);
+          
+          if (processedQuestion.options) {
+            processedQuestion.options = processedQuestion.options.map((opt: any) => ({
+              ...opt,
+              text: simplifyText(opt.text)
+            }));
+            
+            // Shuffle options for sequence_order questions
+            if (processedQuestion.type === 'sequence_order') {
+              processedQuestion.options = shuffleArray(processedQuestion.options);
+            }
+          }
+        }
+        
+        setQuestion(processedQuestion);
       }
     } catch (err: any) {
       // 1. If Quiz Finished

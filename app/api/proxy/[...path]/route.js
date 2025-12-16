@@ -4,11 +4,10 @@ import axios from 'axios';
 import { DbCon } from '@/lib/dbCon';
 import UserAIProfile from '@/models/UserAIProfile';
 
-const AI_ENGINE_URL = process.env.AI_ENGINE_URL 
-
 export async function GET(req, { params }) {
   const resolvedParams = await params;
   const endpoint = Array.isArray(resolvedParams?.path) ? resolvedParams.path.join('/') : '';
+  const AI_ENGINE_URL = process.env.AI_ENGINE_URL;
 
   try {
     const url = `${AI_ENGINE_URL}/${endpoint}`;
@@ -32,10 +31,12 @@ export async function GET(req, { params }) {
 export async function POST(req, { params }) {
   const resolvedParams = await params;
   const endpoint = Array.isArray(resolvedParams?.path) ? resolvedParams.path.join('/') : '';
+  const AI_ENGINE_URL = process.env.AI_ENGINE_URL;
 
   // Validate AI_ENGINE_URL exists
   if (!AI_ENGINE_URL) {
     console.error('❌ AI_ENGINE_URL is not defined in environment variables!');
+    console.error('Available env vars:', Object.keys(process.env).filter(k => k.includes('AI')));
     return NextResponse.json(
       { 
         error: 'AI Engine Configuration Missing', 

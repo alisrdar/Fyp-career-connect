@@ -33,10 +33,23 @@ export async function POST(req, { params }) {
   const resolvedParams = await params;
   const endpoint = Array.isArray(resolvedParams?.path) ? resolvedParams.path.join('/') : '';
 
+  // Validate AI_ENGINE_URL exists
+  if (!AI_ENGINE_URL) {
+    console.error('❌ AI_ENGINE_URL is not defined in environment variables!');
+    return NextResponse.json(
+      { 
+        error: 'AI Engine Configuration Missing', 
+        details: 'AI_ENGINE_URL environment variable is not set' 
+      },
+      { status: 500 }
+    );
+  }
+
   try {
     const body = await req.json();
     const url = `${AI_ENGINE_URL}/${endpoint}`;
     console.log(`🔌 Proxying POST to: ${url}`);
+    console.log(`🌐 AI_ENGINE_URL: ${AI_ENGINE_URL}`);
     console.log(`📦 Body:`, body);
 
     const resp = await axios.post(url, body, {
@@ -93,8 +106,15 @@ export async function POST(req, { params }) {
 
     console.error(`❌ Proxy POST Error [${endpoint}]:`, error?.message || error);
     console.error(`   Response:`, error?.response?.data);
+    console.error(`   AI_ENGINE_URL:`, AI_ENGINE_URL);
+    console.error(`   Attempted URL:`, `${AI_ENGINE_URL}/${endpoint}`);
     return NextResponse.json(
-      { error: 'AI Engine Connection Failed', details: error?.response?.data || error.message },
+      { 
+        error: 'AI Engine Connection Failed', 
+        details: error?.response?.data || error.message,
+        attemptedUrl: AI_ENGINE_URL ? 'configured' : 'MISSING',
+        endpoint: endpoint
+      },
       { status: error.response?.status || 500 }
     );
   }

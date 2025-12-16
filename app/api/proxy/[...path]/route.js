@@ -4,7 +4,7 @@ import axios from 'axios';
 import { DbCon } from '@/lib/dbCon';
 import UserAIProfile from '@/models/UserAIProfile';
 
-const AI_ENGINE_URL = process.env.AI_ENGINE_URL || 'http://localhost:8000';
+const AI_ENGINE_URL = process.env.AI_ENGINE_URL 
 
 export async function GET(req, { params }) {
   const resolvedParams = await params;

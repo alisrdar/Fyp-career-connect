@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Question } from '@/app/quiz/types';
 
 type LikertScaleProps = {
@@ -8,6 +8,11 @@ type LikertScaleProps = {
 
 const LikertScale: React.FC<LikertScaleProps> = ({ question, onAnswer }) => {
   const [selected, setSelected] = useState<number | null>(null);
+
+  // Reset selection when question changes
+  useEffect(() => {
+    setSelected(null);
+  }, [question.id]);
 
   const labels = ['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree'];
   const emojis = ['😞', '😕', '😐', '🙂', '😄'];

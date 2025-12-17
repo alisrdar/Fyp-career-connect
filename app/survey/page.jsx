@@ -38,7 +38,13 @@ export default function SurveyPage() {
       const res = await fetch('/api/survey/questions', { credentials: 'include' })
       const json = await res.json()
       if (json && Array.isArray(json.questions)) {
-        setQuestions(json.questions)
+        // Remove duplicate questions based on _id
+        const uniqueQuestions = json.questions.filter((q, index, self) =>
+          index === self.findIndex((t) => t._id === q._id)
+        )
+        console.log('[Survey] Total questions fetched:', json.questions.length)
+        console.log('[Survey] Unique questions:', uniqueQuestions.length)
+        setQuestions(uniqueQuestions)
       } else {
         setError("Invalid response format from server.")
       }
@@ -88,12 +94,17 @@ export default function SurveyPage() {
   }
 
   async function handleSubmit() {
+    console.log('[Survey Submit] Total questions:', total)
+    console.log('[Survey Submit] Answered questions:', Object.keys(answers).length)
+    console.log('[Survey Submit] All answered:', allAnswered)
+    
     if (!allAnswered) {
-      setError('Please answer all questions before submitting.')
+      setError(`Please answer all questions before submitting. ${Object.keys(answers).length}/${total} completed.`)
       return
     }
 
     const payload = Object.entries(answers).map(([questionId, answer]) => ({ questionId, answer }))
+    console.log('[Survey Submit] Payload:', payload.length, 'responses')
 
     try {
       await fetch('/api/survey/submit', {

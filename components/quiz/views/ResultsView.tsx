@@ -7,10 +7,12 @@ type ResultsViewProps = {
   results: Recommendation[] | null;
   xp: number;
   streak: number;
+  onRetake?: () => void;
 };
 
-const ResultsView: React.FC<ResultsViewProps> = ({ results, xp, streak }) => {
+const ResultsView: React.FC<ResultsViewProps> = ({ results, xp, streak, onRetake }) => {
   const router = useRouter();
+  const [showRetakeModal, setShowRetakeModal] = React.useState(false);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4">
@@ -105,7 +107,57 @@ const ResultsView: React.FC<ResultsViewProps> = ({ results, xp, streak }) => {
             Go to Dashboard
           </button>
         </div>
+
+        {/* Retake Quiz Button */}
+        {onRetake && (
+          <button
+            onClick={() => setShowRetakeModal(true)}
+            className="mt-4 py-3 px-6 border-2 border-orange-500 dark:border-orange-400 
+                     hover:bg-orange-50 dark:hover:bg-orange-900/20 text-orange-600 dark:text-orange-400 
+                     font-semibold rounded-xl transition-all duration-300 hover:scale-105"
+          >
+            🔄 Retake Quiz
+          </button>
+        )}
       </div>
+
+      {/* Retake Confirmation Modal */}
+      {showRetakeModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full shadow-2xl">
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
+              Retake Quiz?
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              Are you sure you want to retake the quiz? This will reset all your progress and you'll start from the beginning.
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowRetakeModal(false)}
+                className="flex-1 py-3 px-6 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 
+                         dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold 
+                         rounded-xl transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowRetakeModal(false);
+                  if (onRetake) {
+                    onRetake();
+                    router.push('/quiz');
+                  }
+                }}
+                className="flex-1 py-3 px-6 bg-gradient-to-r from-orange-500 to-red-500 
+                         hover:from-orange-600 hover:to-red-600 text-white font-semibold 
+                         rounded-xl transition-all"
+              >
+                Yes, Retake
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

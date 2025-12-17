@@ -42,6 +42,7 @@ const QuizPage = () => {
     startSession,
     submitAnswer,
     loadProgress,
+    retakeQuiz,
   } = useQuizGame();
 
   // Check for saved progress on mount and set initial view
@@ -156,7 +157,7 @@ const QuizPage = () => {
         );
       
       case 'results':
-        return <ResultsView results={results} xp={xp} streak={streak} />;
+        return <ResultsView results={results} xp={xp} streak={streak} onRetake={retakeQuiz} />;
       
       default:
         return (

@@ -1,6 +1,9 @@
 import ResultsView from './components/ResultsView';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
+import { formatRIASECDescription } from '@/lib/riasecUtils';
+import { DbCon } from '@/lib/dbCon';
+import PErsonalityResult from '@/models/PErsonalityResult';
 
 // --- 1. Type Definitions (Aligned with Python Backend) ---
 
@@ -30,6 +33,8 @@ async function getRecommendations(userId: string): Promise<RecommendationData | 
     // Use environment variable for Docker/Prod, fallback to localhost for local dev
     const API_URL = process.env.AI_ENGINE_URL || 'http://localhost:8000';
     
+    console.log(`[Results Page] Fetching recommendations from AI Engine: ${API_URL}/recommend/results/${userId}`);
+    
     // Call the new GET endpoint
     const response = await fetch(`${API_URL}/recommend/results/${userId}`, {
       cache: 'no-store', // Always fetch fresh data
@@ -39,15 +44,40 @@ async function getRecommendations(userId: string): Promise<RecommendationData | 
     });
 
     if (!response.ok) {
-      console.error(`Fetch failed: ${response.status} ${response.statusText}`);
+      console.error(`[Results Page] Fetch failed: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      console.error(`[Results Page] Error response:`, errorText);
       return null;
     }
 
     const data = await response.json();
+    console.log(`[Results Page] Successfully fetched recommendations from AI Engine:`, data);
     return data;
   } catch (error) {
-    console.error('Error fetching recommendations:', error);
+    console.error('[Results Page] Error fetching recommendations:', error);
     return null;
+  }
+}
+
+// --- Helper function to fetch personality data ---
+async function getPersonalityData(userId: string) {
+  try {
+    await DbCon();
+    const result: any = await PErsonalityResult.findOne({ userId }).lean();
+    
+    if (!result) {
+      console.log('[Results Page] No personality data found for user');
+      return { hasPersonality: false };
+    }
+
+    console.log('[Results Page] Found personality data:', result);
+    return {
+      hasPersonality: true,
+      traitScores: result.traitScores
+    };
+  } catch (error) {
+    console.error('[Results Page] Error fetching personality data:', error);
+    return { hasPersonality: false };
   }
 }
 
@@ -109,6 +139,7 @@ export default async function ResultsPage({
 
   // Case B: Fetching Data
   const data = await getRecommendations(userId);
+  const personalityData = await getPersonalityData(userId);
 
   // Case C: Error / Failed to Load
   if (!data) {
@@ -134,13 +165,19 @@ export default async function ResultsPage({
   }
 
   // Case D: Success - Transform data to match ResultsView expectations
+  console.log('[Results Page] Raw data from AI Engine:', JSON.stringify(data, null, 2));
+  console.log('[Results Page] Personality data:', JSON.stringify(personalityData, null, 2));
+  
   const transformedData = {
     top_recommendation: {
       career_title: data.recommendations[0]?.title || 'No Match Found',
       match_score: (data.recommendations[0]?.match_score || 0) / 100, // Convert to 0-1 range
+      career_code: data.recommendations[0]?.code,
+      personality_fit: data.recommendations[0]?.personality_fit,
+      aptitude_score: data.recommendations[0]?.aptitude_score,
       salary_range: undefined, // Backend doesn't provide this yet
       job_outlook: undefined,
-      description: `Match Score: ${data.recommendations[0]?.match_score}% | Top Factors: ${data.recommendations[0]?.top_factors?.join(', ')}`,
+      description: formatRIASECDescription(`Match Score: ${data.recommendations[0]?.match_score}% | Top Factors: ${data.recommendations[0]?.top_factors?.join(', ')}`),
       skills_matched: data.recommendations[0]?.top_factors || [],
       personality_alignment: {
         analytical: data.user_profile.logic || 0.5,
@@ -150,12 +187,15 @@ export default async function ResultsPage({
         structured: data.user_profile.attention_speed || 0.5,
         flexible: data.user_profile.interest_a || 0.5,
       },
-      reasoning: `Based on your aptitude scores in ${data.recommendations[0]?.top_factors?.join(', ')}, this career is an excellent match for you.`,
+      reasoning: formatRIASECDescription(`Based on your aptitude scores in ${data.recommendations[0]?.top_factors?.join(', ')}, this career is an excellent match for you.`),
     },
     alternative_careers: data.recommendations.slice(1, 6).map((career) => ({
       career_title: career.title,
       match_score: career.match_score / 100,
-      description: `Code: ${career.code} | Match: ${career.match_score}%`,
+      career_code: career.code,
+      personality_fit: career.personality_fit,
+      aptitude_score: career.aptitude_score,
+      description: formatRIASECDescription(`Code: ${career.code} | Match: ${career.match_score}%`),
       skills_matched: career.top_factors,
       personality_alignment: {
         analytical: data.user_profile.logic || 0.5,
@@ -173,7 +213,10 @@ export default async function ResultsPage({
         .map(([key]) => key),
       skill_strengths: data.recommendations[0]?.top_factors || [],
     },
+    personality_data: personalityData,
   };
+
+  console.log('[Results Page] Transformed data for display:', JSON.stringify(transformedData, null, 2));
 
   return <ResultsView initialData={transformedData} />;
 }

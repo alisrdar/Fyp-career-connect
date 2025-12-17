@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { TrendingUp, DollarSign, Briefcase, ChevronRight } from 'lucide-react';
+import { formatRIASECDescription } from '@/lib/riasecUtils';
 
 interface CareerRecommendation {
   career_title: string;
@@ -87,7 +88,7 @@ export default function MatchCard({ career, isHero, onClick }: MatchCardProps) {
               
               {career.description && (
                 <p className="text-gray-600 dark:text-gray-300 text-lg line-clamp-2">
-                  {career.description}
+                  {formatRIASECDescription(career.description)}
                 </p>
               )}
             </div>
@@ -175,7 +176,7 @@ export default function MatchCard({ career, isHero, onClick }: MatchCardProps) {
                   key={idx}
                   className="px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium"
                 >
-                  {skill}
+                  {formatRIASECDescription(skill)}
                 </span>
               ))}
               {career.skills_matched.length > 4 && (
@@ -223,7 +224,7 @@ export default function MatchCard({ career, isHero, onClick }: MatchCardProps) {
 
         {career.description && (
           <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-            {career.description}
+            {formatRIASECDescription(career.description)}
           </p>
         )}
 
@@ -252,7 +253,7 @@ export default function MatchCard({ career, isHero, onClick }: MatchCardProps) {
                 key={idx}
                 className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-xs font-medium"
               >
-                {skill}
+                {formatRIASECDescription(skill)}
               </span>
             ))}
             {career.skills_matched.length > 2 && (

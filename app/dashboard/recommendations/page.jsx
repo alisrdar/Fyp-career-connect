@@ -258,7 +258,7 @@ export default function CareerRecommendations() {
           )}
 
           {/* Top Matches */}
-          <section>
+          {/* <section>
             <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-center sm:text-left">
               Top Matches
             </h2>
@@ -269,10 +269,10 @@ export default function CareerRecommendations() {
                 </Link>
               ))}
             </div>
-          </section>
+          </section> */}
 
           {/* Why These Recommendations */}
-          <section className="mt-8 sm:mt-12">
+          {/* <section className="mt-8 sm:mt-12">
             <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 border-b-2 text-foreground-light dark:text-foreground-dark border-primary dark:border-muted pb-2 text-center sm:text-left">
               Why These Recommendations?
             </h2>
@@ -303,7 +303,7 @@ export default function CareerRecommendations() {
                 </li>
               ))}
             </ul>
-          </section>
+          </section> */}
         </div>
       </main>
     </div>

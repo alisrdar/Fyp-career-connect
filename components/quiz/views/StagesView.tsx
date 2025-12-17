@@ -14,7 +14,7 @@ type StagesViewProps = {
 const STAGE_CONFIG = [
   {
     id: 1,
-    name: "Warm Up",
+    name: "Stage 1",
     subtitle: "Introduction & Basics",
     icon: "🌱",
     color: "from-green-400 to-green-600",
@@ -23,7 +23,7 @@ const STAGE_CONFIG = [
   },
   {
     id: 2,
-    name: "Deep Dive",
+    name: "Stage 2",
     subtitle: "Core Concepts",
     icon: "🌊",
     color: "from-yellow-400 to-yellow-600",
@@ -32,7 +32,7 @@ const STAGE_CONFIG = [
   },
   {
     id: 3,
-    name: "Final Analysis",
+    name: "Stage 3",
     subtitle: "Advanced Topics",
     icon: "🏁",
     color: "from-red-400 to-red-600",

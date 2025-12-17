@@ -79,7 +79,7 @@ const GameView: React.FC<GameViewProps> = ({
         <div className="flex items-center justify-between gap-4">
           {/* Question Counter */}
           <div className="text-gray-600 dark:text-gray-400 font-medium">
-            Question {questionCount} / {maxQuestions}
+            Question {questionCount + 1} / {maxQuestions}
           </div>
 
           {/* Gamification Stats */}

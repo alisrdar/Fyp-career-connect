@@ -47,9 +47,9 @@ function shuffleArray<T>(array: T[]): T[] {
 
 // --- CONFIGURATION ---
 const STAGES: Record<number, Stage> = {
-  1: { name: "Warm Up", color: "bg-green-500", textColor: "text-green-500", icon: "🌱" },
-  2: { name: "Deep Dive", color: "bg-yellow-500", textColor: "text-yellow-500", icon: "🌊" },
-  3: { name: "Final Analysis", color: "bg-red-500", textColor: "text-red-500", icon: "🏁" }
+  1: { name: "Stage 1", color: "bg-green-500", textColor: "text-green-500", icon: "🌱" },
+  2: { name: "Stage 2", color: "bg-yellow-500", textColor: "text-yellow-500", icon: "🌊" },
+  3: { name: "Stage 3", color: "bg-red-500", textColor: "text-red-500", icon: "🏁" }
 };
 
 // Demographic Limits
@@ -111,6 +111,7 @@ export function useQuizGame() {
       completedStages,
       streak,
       xp,
+      isCompleted: isFinished,
       timestamp: Date.now()
     };
     localStorage.setItem('quizProgress', JSON.stringify(progress));
@@ -254,6 +255,24 @@ export function useQuizGame() {
       
       setResults(res.data.recommendations);
       setIsFinished(true);
+      
+      // Mark all stages as completed
+      setCompletedStages([1, 2, 3]);
+      
+      // Save completion to database
+      try {
+        await axios.post('/api/quiz/complete', {
+          finalXp: xp,
+          finalStreak: streak
+        });
+      } catch (dbError) {
+        console.error('Failed to save completion to DB:', dbError);
+      }
+      
+      // Save completion status to localStorage
+      setTimeout(() => {
+        saveProgress();
+      }, 100);
     } catch (err) {
       console.error("Results Error", err);
     } finally {
@@ -466,6 +485,39 @@ export function useQuizGame() {
   // Get current stage
   const stage = STAGES[Math.min(currentStageId, 3)];
 
+  // --- RETAKE QUIZ ---
+  const retakeQuiz = async () => {
+    if (!user) return;
+    
+    try {
+      // 1. Delete/abandon current quiz session in database
+      await axios.delete('/api/quiz/session');
+      
+      // 2. Clear local storage
+      localStorage.removeItem('quizProgress');
+      
+      // 3. Reset all state
+      setQuestion(null);
+      setIsFinished(false);
+      setResults(null);
+      setQuestionCount(0);
+      setPreviousStageId(1);
+      setCompletedStages([]);
+      setStreak(0);
+      setXp(0);
+      setXpGained(0);
+      setBadge(null);
+      sessionStarted.current = false;
+      
+      console.log('🔄 Quiz reset for retake - DB session abandoned');
+    } catch (error) {
+      console.error('Error during quiz retake:', error);
+      // Still reset local state even if API call fails
+      localStorage.removeItem('quizProgress');
+      sessionStarted.current = false;
+    }
+  };
+
   return { 
     question, 
     results,
@@ -486,6 +538,7 @@ export function useQuizGame() {
     mascotState: mascot.state,
     startSession,
     submitAnswer,
-    loadProgress
+    loadProgress,
+    retakeQuiz
   };
 }

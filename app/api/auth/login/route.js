@@ -43,8 +43,13 @@ export async function POST(request) {
         const tokenData = {
             id : user._id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            isAdmin: user.isAdmin || false
         }
+
+        console.log("[Login API] User:", user.email);
+        console.log("[Login API] isAdmin from DB:", user.isAdmin);
+        console.log("[Login API] Token data:", tokenData);
 
         const token =  jwt.sign(tokenData, process.env.TOKEN_SECRET, {expiresIn: '1d'})
 

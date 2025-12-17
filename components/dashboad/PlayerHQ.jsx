@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getRecentActivities } from '@/helpers/activityLogger';
+import DashboardTutorial from './DashboardTutorial';
 import { 
   Flame, 
   Trophy, 
@@ -29,6 +30,7 @@ export default function PlayerHQ() {
   const [recentActivities, setRecentActivities] = useState([]);
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   // Detect mobile screen size
   useEffect(() => {
@@ -39,6 +41,27 @@ export default function PlayerHQ() {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Check if user has seen tutorial
+  useEffect(() => {
+    if (user && quizProgress !== null) {
+      const tutorialKey = `tutorialCompleted_${user._id}`;
+      const hasSeenTutorial = localStorage.getItem(tutorialKey);
+      
+      // Only show tutorial if:
+      // 1. User hasn't seen it before AND
+      // 2. User hasn't started quiz (no quiz progress or questionCount = 0)
+      const hasNoQuizProgress = !quizProgress || quizProgress.questionCount === 0;
+      
+      if (!hasSeenTutorial && hasNoQuizProgress) {
+        // Show tutorial after a short delay for smooth UX
+        const timer = setTimeout(() => {
+          setShowTutorial(true);
+        }, 1500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [user, quizProgress]);
 
   // Load activities
   useEffect(() => {
@@ -102,11 +125,12 @@ export default function PlayerHQ() {
     ? Math.min((quizProgress.questionCount / 30) * 100, 100) 
     : 0;
   const currentStage = quizProgress?.currentStageId || 1;
-  const stageNames = { 1: 'Warm Up', 2: 'Deep Dive', 3: 'Final Analysis' };
+  const stageNames = { 1: 'Stage 1', 2: 'Stage 2', 3: 'Stage 3' };
   const stageName = stageNames[currentStage] || 'Not Started';
   const stageProgress = quizProgress?.questionCount 
     ? ((quizProgress.questionCount % 10) / 10) * 100 
     : 0;
+  const isQuizCompleted = quizProgress?.isCompleted || false;
 
   // Get icon and color for activity type
   const getActivityIconAndColor = (iconName) => {
@@ -119,6 +143,27 @@ export default function PlayerHQ() {
       Trophy: { icon: Trophy, color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400' }
     };
     return iconMap[iconName] || iconMap.CheckCircle;
+  };
+
+  const handleTutorialComplete = () => {
+    if (user) {
+      localStorage.setItem(`tutorialCompleted_${user._id}`, 'true');
+    }
+    setShowTutorial(false);
+  };
+
+  const handleTutorialSkip = () => {
+    if (user) {
+      localStorage.setItem(`tutorialCompleted_${user._id}`, 'true');
+    }
+    setShowTutorial(false);
+  };
+
+  const handleRestartTutorial = () => {
+    setShowGuideModal(false);
+    setTimeout(() => {
+      setShowTutorial(true);
+    }, 300);
   };
 
   // Format timestamp
@@ -155,6 +200,7 @@ export default function PlayerHQ() {
       >
         {/* HERO WELCOME CARD - Mobile vs Desktop Conditional Rendering */}
         <motion.div
+          id="welcome-card"
           variants={itemVariants}
           whileHover={{ scale: isMobile ? 1 : 1.02, y: isMobile ? 0 : -5 }}
           whileTap={{ scale: 0.98 }}
@@ -303,6 +349,7 @@ export default function PlayerHQ() {
 
         {/* SURVEY CARD - Conditional Mobile/Desktop */}
         <motion.div
+          id="survey-card"
           variants={itemVariants}
           whileHover={{ scale: isMobile ? 1 : 1.02, y: isMobile ? 0 : -5 }}
           whileTap={{ scale: 0.98 }}
@@ -356,6 +403,7 @@ export default function PlayerHQ() {
 
         {/* NEXT QUEST CARD - Spans 2 cols */}
         <motion.div
+          id="next-quest-card"
           variants={itemVariants}
           whileHover={{ scale: isMobile ? 1 : 1.02, y: isMobile ? 0 : -5 }}
           whileTap={{ scale: 0.98 }}
@@ -382,34 +430,51 @@ export default function PlayerHQ() {
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-3 sm:mb-4">
               <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                Next Quest
+                {isQuizCompleted ? 'Quiz Complete! 🎉' : 'Next Quest'}
               </h2>
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
               >
-                <Star className="w-5 h-5 sm:w-6 sm:h-6 text-white fill-white" />
+                {isQuizCompleted ? (
+                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-white fill-white" />
+                ) : (
+                  <Star className="w-5 h-5 sm:w-6 sm:h-6 text-white fill-white" />
+                )}
               </motion.div>
             </div>
 
-            <p className="text-white/90 text-base sm:text-lg mb-3 sm:mb-4 font-semibold">
-              Continue: {stageName}
-            </p>
+            {isQuizCompleted ? (
+              <>
+                <p className="text-white/90 text-base sm:text-lg mb-3 sm:mb-4 font-semibold">
+                  Status: ✅ Completed
+                </p>
+                <p className="text-white/80 text-sm mb-4 sm:mb-6">
+                  Great job! You've completed all stages of the career quiz.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-white/90 text-base sm:text-lg mb-3 sm:mb-4 font-semibold">
+                  Continue: {stageName}
+                </p>
 
-            {/* Progress Bar */}
-            <div className="mb-4 sm:mb-6">
-              <div className="w-full h-2.5 sm:h-3 bg-white/30 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${stageProgress}%` }}
-                  transition={{ duration: 1, ease: 'easeOut', delay: 0.5 }}
-                  className="h-full bg-white rounded-full shadow-lg"
-                />
-              </div>
-              <p className="text-white/80 text-xs sm:text-sm mt-1.5 sm:mt-2">
-                {Math.round(stageProgress)}% Complete
-              </p>
-            </div>
+                {/* Progress Bar */}
+                <div className="mb-4 sm:mb-6">
+                  <div className="w-full h-2.5 sm:h-3 bg-white/30 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${stageProgress}%` }}
+                      transition={{ duration: 1, ease: 'easeOut', delay: 0.5 }}
+                      className="h-full bg-white rounded-full shadow-lg"
+                    />
+                  </div>
+                  <p className="text-white/80 text-xs sm:text-sm mt-1.5 sm:mt-2">
+                    {Math.round(stageProgress)}% Complete
+                  </p>
+                </div>
+              </>
+            )}
 
             {/* CTA Button */}
             <motion.button
@@ -419,16 +484,31 @@ export default function PlayerHQ() {
               className="w-full md:w-auto bg-white text-primary font-bold py-3 px-6 rounded-full shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center gap-2"
               style={{ fontFamily: 'Poppins, sans-serif' }}
             >
-              {quizProgress ? 'Resume Quiz' : 'Start Quiz'}
-              <ArrowRight className="w-5 h-5" />
+              {isQuizCompleted ? (
+                <>
+                  View Results
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              ) : quizProgress ? (
+                <>
+                  Resume Quiz
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              ) : (
+                <>
+                  Start Quiz
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
             </motion.button>
           </div>
         </motion.div>
 
         {/* QUICK STATS ROW - 3 Cards */}
-        
+          
         {/* Card A: Assessment Score */}
         <motion.div
+          id="assessment-card"
           variants={itemVariants}
           whileHover={{ y: -5, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}
           whileTap={{ scale: 0.98 }}
@@ -505,6 +585,7 @@ export default function PlayerHQ() {
 
         {/* Card B: Badges */}
         <motion.div
+          id="badges-card"
           variants={itemVariants}
           whileHover={{ y: -5, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}
           whileTap={{ scale: 0.98 }}
@@ -539,6 +620,7 @@ export default function PlayerHQ() {
 
         {/* Card C: Career Resources Hub */}
         <motion.div
+          id="resources-card"
           variants={itemVariants}
           whileHover={{ y: -5, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}
           whileTap={{ scale: 0.98 }}
@@ -558,8 +640,9 @@ export default function PlayerHQ() {
           </div>
         </motion.div>
 
-        {/* Activity Guide Card */}
+        {/* Activity Guide Card - UPDATED VERSION */}
         <motion.div
+          id="guide-card"
           variants={itemVariants}
           whileHover={{ y: -5, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}
           whileTap={{ scale: 0.98 }}
@@ -581,6 +664,7 @@ export default function PlayerHQ() {
 
         {/* RECENT ACTIVITY - Full width on mobile, 2 cols on larger */}
         <motion.div
+          id="activity-card"
           variants={itemVariants}
           className="md:col-span-3 lg:col-span-2 bg-white dark:bg-surface rounded-xl sm:rounded-2xl shadow-xl dark:shadow-black/20 p-4 sm:p-6 border border-transparent dark:border-border"
         >
@@ -758,14 +842,30 @@ export default function PlayerHQ() {
 
               {/* Footer */}
               <div className="mt-6 p-4 bg-gradient-to-r from-primary/10 to-secondary/10 dark:from-primary/20 dark:to-secondary/20 rounded-xl border border-primary/20 dark:border-primary/30">
-                <p className="text-sm text-center text-gray-700 dark:text-gray-300" style={{ fontFamily: 'Inter, sans-serif' }}>
+                <p className="text-sm text-center text-gray-700 dark:text-gray-300 mb-3" style={{ fontFamily: 'Inter, sans-serif' }}>
                   💡 <strong>Tip:</strong> All these activities are automatically tracked and displayed in your Recent Activity feed!
                 </p>
+                <button
+                  onClick={handleRestartTutorial}
+                  className="w-full px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-semibold hover:from-primary/90 hover:to-secondary/90 transition-all flex items-center justify-center gap-2"
+                  style={{ fontFamily: 'Poppins, sans-serif' }}
+                >
+                  <Map className="w-4 h-4" />
+                  Restart Dashboard Tour
+                </button>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Dashboard Tutorial */}
+      {showTutorial && (
+        <DashboardTutorial
+          onComplete={handleTutorialComplete}
+          onSkip={handleTutorialSkip}
+        />
+      )}
     </div>
   );
 }

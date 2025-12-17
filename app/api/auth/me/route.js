@@ -30,6 +30,9 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    console.log("[/api/auth/me] User found:", user.email);
+    console.log("[/api/auth/me] isAdmin:", user.isAdmin);
+
     delete user.password;
     return NextResponse.json(user, { status: 200 });
   } catch (err) {

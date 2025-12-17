@@ -25,15 +25,19 @@ const page = () => {
         }
     ];
     const router = useRouter()
-    const { login } = useAuth()
+    const { login, user } = useAuth()
     const onLogin = async (data, setError) => {
         try{
             const ok = await login(data)
             if (!ok) {
               throw new Error("Login failed")
             }
-            // toast.success("Login successful!")
-            router.push("/dashboard");
+            
+            console.log("[Login Page] Login successful, letting middleware handle redirect");
+            
+            // Force a full page reload to trigger middleware
+            window.location.href = "/";
+            
             return true; // signal success
         } catch(err){
           console.log("login failed", err);

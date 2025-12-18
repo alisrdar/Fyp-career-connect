@@ -285,7 +285,9 @@ export function useQuizGame() {
     try {
       const res = await axios.post('/api/proxy/rag/next-question', { user_id: (user as any)?._id });
       
-      console.log('Next Question:', res);
+      console.log('[RAG] Next Question Response:', res.data);
+      console.log('[RAG] Question Type:', res.data?.type);
+      console.log('[RAG] Question ID:', res.data?.id);
 
       if (res.status === 204) {
         finishQuiz();
@@ -309,6 +311,7 @@ export function useQuizGame() {
           }
         }
         
+        console.log('[RAG] Processed Question Type:', processedQuestion?.type);
         setQuestion(processedQuestion);
       }
     } catch (err: any) {

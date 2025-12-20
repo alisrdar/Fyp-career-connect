@@ -16,8 +16,8 @@ const responseItemSchema = new Schema({
 const personalityResponseSchema = new Schema({
   userId: {
     type: String, // or ObjectId if you’re referencing users
-    required: true,
-  },
+    required: true,    unique: true,
+    index: true,  },
   responses: {
     type: [responseItemSchema],
     required: true,

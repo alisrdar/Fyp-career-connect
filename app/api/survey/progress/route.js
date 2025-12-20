@@ -5,6 +5,7 @@ import { cookies } from 'next/headers'
 import jwt from 'jsonwebtoken'
 import { DbCon } from '@/lib/dbCon'
 import PersonalityResponse from '@/models/PersonalityResponse'
+import PersonalityQuestion from '@/models/PersonalityQuestion'
 
 export async function GET(req) {
   try {
@@ -22,13 +23,41 @@ export async function GET(req) {
     }
     const userId = decoded.id
 
-    const record = await PersonalityResponse.findOne({ userId }).lean()
-    if (!record) {
-      return NextResponse.json({ completed: 0, responses: [] }, { status: 200 })
+    // Critical validation
+    if (!userId || typeof userId !== 'string') {
+      console.error('[SURVEY PROGRESS] Invalid userId from token:', userId);
+      return NextResponse.json(
+        { error: "Invalid user identification" },
+        { status: 400 }
+      );
     }
 
+    console.log(`[SURVEY PROGRESS] Fetching progress for user: ${userId}`);
+
+    // Fetch total number of questions
+    const totalQuestions = await PersonalityQuestion.countDocuments()
+
+    // Fetch user's responses
+    const record = await PersonalityResponse.findOne({ userId }).lean()
+    if (!record) {
+      return NextResponse.json({ 
+        completed: 0, 
+        responses: [],
+        totalQuestions,
+        isComplete: false
+      }, { status: 200 })
+    }
+
+    const answeredCount = record.responses.length
+    const isComplete = answeredCount >= totalQuestions
+
     return NextResponse.json(
-      { completed: record.responses.length, responses: record.responses },
+      { 
+        completed: answeredCount, 
+        responses: record.responses,
+        totalQuestions,
+        isComplete
+      },
       { status: 200 }
     )
   } catch (err) {

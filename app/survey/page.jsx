@@ -5,6 +5,7 @@ import QuestionCounter from '@/components/dashboad/quiz/QuestionCounter'
 import LikertScale from '@/components/quiz/templates/LikertScale'
 import SurveyControls from '@/components/dashboad/survey/SurveyControls'
 import QuizTopBar from '@/components/dashboad/quiz/QuizTopbar'
+import ConfirmModal from '@/components/ui/ConfirmModal'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { logActivity, ActivityTypes } from '@/helpers/activityLogger'
@@ -21,30 +22,60 @@ export default function SurveyPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [hasLoggedStart, setHasLoggedStart] = useState(false)
+  const [isCompleted, setIsCompleted] = useState(false)
+  const [isResetting, setIsResetting] = useState(false)
+  const [showRetakeModal, setShowRetakeModal] = useState(false)
 
+  // Load questions and user's progress from backend
   useEffect(() => {
-    const saved = localStorage.getItem('surveyResponses')
-    if (saved) setAnswers(JSON.parse(saved))
-    fetchQuestions()
-  }, [])
+    if (user) {
+      fetchQuestionsAndProgress()
+    }
+  }, [user])
 
-  useEffect(() => {
-    localStorage.setItem('surveyResponses', JSON.stringify(answers))
-  }, [answers])
-
-  async function fetchQuestions() {
+  async function fetchQuestionsAndProgress() {
     setLoading(true)
     try {
-      const res = await fetch('/api/survey/questions', { credentials: 'include' })
-      const json = await res.json()
-      if (json && Array.isArray(json.questions)) {
+      // Fetch questions
+      const questionsRes = await fetch('/api/survey/questions', { credentials: 'include' })
+      const questionsJson = await questionsRes.json()
+      
+      if (questionsJson && Array.isArray(questionsJson.questions)) {
         // Remove duplicate questions based on _id
-        const uniqueQuestions = json.questions.filter((q, index, self) =>
+        const uniqueQuestions = questionsJson.questions.filter((q, index, self) =>
           index === self.findIndex((t) => t._id === q._id)
         )
-        console.log('[Survey] Total questions fetched:', json.questions.length)
+        console.log('[Survey] Total questions fetched:', questionsJson.questions.length)
         console.log('[Survey] Unique questions:', uniqueQuestions.length)
         setQuestions(uniqueQuestions)
+
+        // Fetch user's existing progress
+        const progressRes = await fetch('/api/survey/progress', { credentials: 'include' })
+        const progressJson = await progressRes.json()
+        
+        if (progressJson && Array.isArray(progressJson.responses)) {
+          // Convert array of {questionId, answer} to object format
+          const existingAnswers = {}
+          progressJson.responses.forEach(resp => {
+            existingAnswers[resp.questionId] = resp.answer
+          })
+          console.log('[Survey] Loaded existing progress:', Object.keys(existingAnswers).length, 'answers')
+          console.log('[Survey] Backend reports isComplete:', progressJson.isComplete)
+          setAnswers(existingAnswers)
+          
+          // Use backend-verified completion status
+          if (progressJson.isComplete) {
+            // Survey already completed - show completion screen
+            console.log('[Survey] Backend confirmed all questions answered, showing completion screen')
+            setIsCompleted(true)
+          } else {
+            // Set current page to first unanswered question
+            const firstUnanswered = uniqueQuestions.findIndex(q => !existingAnswers[q._id])
+            if (firstUnanswered >= 0) {
+              setCurrentPage(firstUnanswered)
+            }
+          }
+        }
       } else {
         setError("Invalid response format from server.")
       }
@@ -64,12 +95,31 @@ export default function SurveyPage() {
   const allAnswered = total > 0 && Object.keys(answers).length === total
   const progress = total > 0 ? ((Object.keys(answers).length / total) * 100) : 0
 
-  function handleSelect(questionId, option) {
+  async function handleSelect(questionId, option) {
     if (user && !hasLoggedStart) {
       logActivity(user._id, ActivityTypes.SURVEY_STARTED)
       setHasLoggedStart(true)
     }
+    
+    // Update local state
     setAnswers(prev => ({ ...prev, [questionId]: option }))
+    
+    // Save to backend immediately
+    try {
+      await fetch('/api/survey/submit', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          responses: [{ questionId, answer: option }]
+        })
+      })
+      console.log('[Survey] Saved answer for question:', questionId)
+    } catch (error) {
+      console.error('[Survey] Failed to save answer:', error)
+      setError('Failed to save your answer. Please try again.')
+      return
+    }
     
     // Auto-advance to next question after a short delay
     setTimeout(() => {
@@ -93,6 +143,30 @@ export default function SurveyPage() {
     }
   }
 
+  async function handleRetakeSurvey() {
+    setIsResetting(true)
+    setShowRetakeModal(false)
+    try {
+      const res = await fetch('/api/survey/reset', {
+        method: 'POST',
+        credentials: 'include'
+      })
+      
+      if (res.ok) {
+        // Reload page to start fresh
+        window.location.reload()
+      } else {
+        const data = await res.json()
+        setError(data.error || 'Failed to reset survey')
+        setIsResetting(false)
+      }
+    } catch (e) {
+      console.error('Reset failed:', e)
+      setError('Failed to reset survey. Please try again.')
+      setIsResetting(false)
+    }
+  }
+
   async function handleSubmit() {
     console.log('[Survey Submit] Total questions:', total)
     console.log('[Survey Submit] Answered questions:', Object.keys(answers).length)
@@ -103,17 +177,9 @@ export default function SurveyPage() {
       return
     }
 
-    const payload = Object.entries(answers).map(([questionId, answer]) => ({ questionId, answer }))
-    console.log('[Survey Submit] Payload:', payload.length, 'responses')
-
     try {
-      await fetch('/api/survey/submit', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ responses: payload })
-      })
-      const scoreRes = await fetch('api/survey/score', {
+      // Calculate and save personality scores
+      const scoreRes = await fetch('/api/survey/score', {
         method: 'POST',
         credentials:'include'
       })
@@ -129,9 +195,8 @@ export default function SurveyPage() {
         logActivity(user._id, ActivityTypes.SURVEY_COMPLETED)
       }
       
-      localStorage.removeItem('surveyResponses')
-      // Redirect or confirmation logic goes here
-      router.push('/dashboard/recommendations')
+      // Show completion screen instead of redirecting
+      setIsCompleted(true)
 
     } catch (e) {
       console.error(e)
@@ -145,6 +210,68 @@ export default function SurveyPage() {
         <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
         <p className="text-gray-600 dark:text-gray-400">Loading survey...</p>
       </div>
+    </div>
+  )
+
+  // Show completion screen after submission
+  if (isCompleted) return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="max-w-2xl w-full bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden"
+      >
+        {/* Success Header */}
+        <div className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 p-8 text-white text-center">
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className="text-6xl mb-4"
+          >
+            🎉
+          </motion.div>
+          <h1 className="text-3xl font-bold mb-2">Survey Completed!</h1>
+          <p className="text-green-50 text-lg">Your personality analysis is ready</p>
+        </div>
+
+        {/* Content */}
+        <div className="p-8 text-center space-y-6">
+          <p className="text-gray-600 dark:text-gray-300 text-lg">
+            Thank you for completing the personality survey. We've analyzed your responses and generated personalized career recommendations just for you.
+          </p>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+            <button
+              onClick={() => router.push('/dashboard/recommendations')}
+              className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+            >
+              📊 See Your Results
+            </button>
+            <button
+              onClick={() => setShowRetakeModal(true)}
+              disabled={isResetting}
+              className="px-8 py-4 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-semibold rounded-xl border-2 border-gray-300 dark:border-gray-600 hover:border-blue-400 dark:hover:border-blue-500 shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              {isResetting ? '⏳ Resetting...' : '🔄 Retake Survey'}
+            </button>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Retake Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showRetakeModal}
+        onClose={() => setShowRetakeModal(false)}
+        onConfirm={handleRetakeSurvey}
+        title="Retake Survey?"
+        message="Are you sure you want to retake the survey? This will delete your current results and you'll need to answer all questions again."
+        confirmText="Yes, Retake Survey"
+        cancelText="Cancel"
+        confirmVariant="primary"
+        isLoading={isResetting}
+      />
     </div>
   )
   
@@ -226,6 +353,7 @@ export default function SurveyPage() {
                   <LikertScale
                     question={currentQuestion}
                     onAnswer={(option) => handleSelect(currentQuestion._id, option)}
+                    initialAnswer={answers[currentQuestion._id]}
                   />
 
                   {/* Answer Indicator */}

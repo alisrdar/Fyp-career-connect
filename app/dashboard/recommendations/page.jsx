@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Card from "@/components/ui/Card"
 import Button from '@/components/ui/Button'
+import ConfirmModal from '@/components/ui/ConfirmModal'
 import BackToTopButton from '@/components/ui/BacktoTheTop'
 import Link from 'next/link'
 import { getAllCareers } from '@/lib/data/careers'
@@ -27,6 +28,8 @@ export default function CareerRecommendations() {
   const [strongestScore, setStrongestScore] = useState(null)
   const reportRef = useRef(null)
   const [showAIRecommendations, setShowAIRecommendations] = useState(false)
+  const [resetting, setResetting] = useState(false)
+  const [showRetakeModal, setShowRetakeModal] = useState(false)
 
   // Fetch stored personality report
   useEffect(() => {
@@ -88,6 +91,32 @@ export default function CareerRecommendations() {
     } catch (e) {
       console.error('PDF download failed:', e)
       alert('PDF generate karne mein error aya. Try again.')
+    }
+  }
+
+  // Retake Survey - Reset responses and redirect
+  const handleRetakeSurvey = async () => {
+    setResetting(true)
+    setShowRetakeModal(false)
+    try {
+      const res = await fetch('/api/survey/reset', {
+        method: 'POST',
+        credentials: 'include'
+      })
+      
+      const data = await res.json()
+      
+      if (res.ok) {
+        // Redirect to survey page
+        window.location.href = '/survey'
+      } else {
+        alert(data.error || 'Failed to reset survey')
+        setResetting(false)
+      }
+    } catch (e) {
+      console.error('Reset failed:', e)
+      alert('Failed to reset survey. Please try again.')
+      setResetting(false)
     }
   }
 
@@ -234,7 +263,7 @@ export default function CareerRecommendations() {
               </div>
 
               {/* Download Button */}
-              <div className="mt-6 flex justify-center sm:justify-start">
+              <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center sm:justify-start">
                 <Button
                   className="w-full sm:w-auto text-darkblue dark:text-primary"
                   variant="secondary"
@@ -242,6 +271,15 @@ export default function CareerRecommendations() {
                   type='button'
                   size='lg'
                   btnText={"Download Report"}
+                />
+                <Button
+                  className="w-full sm:w-auto"
+                  variant="outline"
+                  onClick={() => setShowRetakeModal(true)}
+                  type='button'
+                  size='lg'
+                  btnText={resetting ? "Resetting..." : "Retake Survey"}
+                  disabled={resetting}
                 />
               </div>
             </div>
@@ -306,6 +344,19 @@ export default function CareerRecommendations() {
           </section> */}
         </div>
       </main>
+
+      {/* Retake Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showRetakeModal}
+        onClose={() => setShowRetakeModal(false)}
+        onConfirm={handleRetakeSurvey}
+        title="Retake Survey?"
+        message="Are you sure you want to retake the survey? This will delete your current results and you'll need to answer all questions again."
+        confirmText="Yes, Retake Survey"
+        cancelText="Cancel"
+        confirmVariant="primary"
+        isLoading={resetting}
+      />
     </div>
   )
 }

@@ -27,6 +27,15 @@ export async function POST(req) {
     }
     const userId = decoded.id;
 
+    // Critical validation
+    if (!userId || typeof userId !== 'string') {
+      console.error('[SURVEY SUBMIT] Invalid userId from token:', userId);
+      return NextResponse.json(
+        { error: "Invalid user identification" },
+        { status: 400 }
+      );
+    }
+
     const { responses } = await req.json();
 
     if (!Array.isArray(responses) || responses.length === 0) {
@@ -47,13 +56,49 @@ export async function POST(req) {
       );
     }
 
-    // Upsert: create or overwrite existing survey responses for this user
-    await PersonalityResponse.findOneAndUpdate(
-      { userId },
-      { userId, responses, updatedAt: new Date() },
-      { upsert: true }
-    );
+    // Upsert: merge new responses with existing ones
+    const existingResponse = await PersonalityResponse.findOne({ userId });
+    
+    console.log(`[SURVEY SUBMIT] User ${userId} submitting ${responses.length} response(s)`);
+    console.log(`[SURVEY SUBMIT] Existing record found: ${!!existingResponse}`);
+    
+    if (existingResponse) {
+      // Merge: update existing answers, add new ones
+      const responseMap = new Map(
+        existingResponse.responses.map(r => [r.questionId, r.answer])
+      );
+      
+      console.log(`[SURVEY SUBMIT] User ${userId} had ${existingResponse.responses.length} existing responses`);
+      
+      // Update/add new responses
+      responses.forEach(r => {
+        responseMap.set(r.questionId, r.answer);
+      });
+      
+      // Convert back to array
+      const mergedResponses = Array.from(responseMap.entries()).map(([questionId, answer]) => ({
+        questionId,
+        answer
+      }));
+      
+      console.log(`[SURVEY SUBMIT] User ${userId} now has ${mergedResponses.length} total responses`);
+      
+      await PersonalityResponse.findOneAndUpdate(
+        { userId },
+        { responses: mergedResponses, updatedAt: new Date() },
+        { upsert: true }
+      );
+    } else {
+      // First submission - create new document
+      console.log(`[SURVEY SUBMIT] Creating first submission for user ${userId}`);
+      await PersonalityResponse.create({
+        userId,
+        responses,
+        updatedAt: new Date()
+      });
+    }
 
+    console.log(`[SURVEY SUBMIT] Successfully saved for user ${userId}`);
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (err) {
     console.error("[SURVEY SUBMIT ERROR]", err);
